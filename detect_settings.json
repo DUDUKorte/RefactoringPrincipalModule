@@ -1,0 +1,10 @@
+{
+"detect_method" : "face_recognition",
+"face_encoding_resample" : 5,
+"model" : "cnn",
+"locations_upsample" : 0,
+"tolerance" : 0.4,
+"min_detection_confidence" : 0.5,
+"distance_pixels" : 180,
+"DEBUG" : true
+}
