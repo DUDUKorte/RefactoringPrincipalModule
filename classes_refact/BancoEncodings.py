@@ -177,7 +177,7 @@ class BancoEncodings:
         
         return encoded_faces
     
-    def _encode_all_faces(self, force = True):
+    def _encode_all_faces_one_file(self, force = True):
         ids_list = []
         encoded_faces = []
         for ids in os.listdir(self.path):

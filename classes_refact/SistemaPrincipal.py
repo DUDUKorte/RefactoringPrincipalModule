@@ -27,7 +27,7 @@ class SistemaPrincipal:
 
         #encoded_faces = self.bancoEncodings._load_pickle_face_encodings()
         #print(f'INFO: CODIFICANDO FACES REGISTRADAS EM: {faces_registradas_path}')
-        #encoded_faces = self.bancoEncodings._encode_all_faces() #Codifica rostos com listas
+        #encoded_faces = self.bancoEncodings._encode_all_faces_one_file() #Codifica rostos com listas
         print('INFO: CARREGANDO FACES CODIFICADAS...')
         encoded_faces = self.bancoEncodings._load_encoded_lists() #Carrega sistema com listas
 
