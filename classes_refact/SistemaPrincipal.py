@@ -27,21 +27,21 @@ class SistemaPrincipal:
 
         #encoded_faces = self.bancoEncodings._load_pickle_face_encodings()
         #print(f'INFO: CODIFICANDO FACES REGISTRADAS EM: {faces_registradas_path}')
-        #encoded_faces = self.bancoEncodings._encode_all_faces_one_file() #Codifica rostos com listas
+        #encoded_faces = self.bancoEncodings._encode_all_faces_onefile() #Codifica rostos com listas
         print('INFO: CARREGANDO FACES CODIFICADAS...')
-        encoded_faces = self.bancoEncodings._load_encoded_lists() #Carrega sistema com listas
+        self.encoded_faces = self.bancoEncodings._load_encoded_lists_onefile() #Carrega sistema com listas
 
         #Verificando se todos as codificações são válidas
-        if detect_settings['DEBUG']:
-            for i in encoded_faces[1]:
-                print(i.shape)
+        # if detect_settings['DEBUG']:
+        #     for i in encoded_faces[1]:
+        #         print(i.shape)
         
         # Cria Câmera e inicializa a classe
         self.camera = Camera.Camera(cam_settings)
-        cam_param = self.camera.get_camera_object()
+        self.cam_param = self.camera.get_camera_object()
 
         # iniciar o objeto da classe do reconhecimento com os parâmetros
-        self.processoReconhecimento = ProcessoReconhecimento.ProcessoReconhecimento(detect_settings, cam_param, self, encoded_faces)
+        self.processoReconhecimento = ProcessoReconhecimento.ProcessoReconhecimento(detect_settings, self)
 
     def start_face_recognition(self):
         # iniciar o sistema de reconhecimento, usar threads
@@ -53,7 +53,7 @@ class SistemaPrincipal:
     def notificacaoReconhecimento(self, id):
         # notificar o banco de dados com o id do aluno reconhecido
         # no sistema do reconhecimento facial
-        print(id);
+        print(id)
         pass
 
     def start_user_register(self):

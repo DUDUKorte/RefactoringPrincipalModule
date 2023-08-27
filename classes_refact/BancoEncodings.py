@@ -12,6 +12,9 @@ class BancoEncodings:
         self.path = os.path.join(*self.path[2:].split('/'))
         self.path = drive_letter+'\\'+self.path
 
+        self.model='large' 
+        self.num_jitters=500
+
     def create_face_encoding(self, force = False):
         # path.split('/')?
         # os.path.join(pasta, pasta, pasta) << caminho de pasta funcional para qualquer OS
@@ -147,11 +150,11 @@ class BancoEncodings:
         # atualiza o encoding se load_encoding = True
         pass
 
-    def _save_face_encodings(self, encoded_faces):
+    def save_face_encodings(self, encoded_faces):
         with open('dataset_faces.enc', 'wb') as f:
             pickle.dump(encoded_faces, f)
 
-    def _load_pickle_face_encodings(self):
+    def encode_all_faces(self):
 #        with open('dataset_faces.enc', 'rb') as f:
 #            encoded_faces = pickle.load(f)
         encoded_faces = dict()
@@ -177,7 +180,7 @@ class BancoEncodings:
         
         return encoded_faces
     
-    def _encode_all_faces_one_file(self, force = True):
+    def _encode_all_faces_onefile(self, force = True):
         ids_list = []
         encoded_faces = []
         for ids in os.listdir(self.path):
@@ -186,7 +189,7 @@ class BancoEncodings:
                     if not os.path.exists(f'{self.path}\\{ids}\\{file}.enc') or force == True:
                         # Fazer encoding do arquivo se não existir e salvar como .enc
                         file_loaded = face_recognition.load_image_file(f'{self.path}\\{ids}\\{file}')
-                        file_encoded = face_recognition.face_encodings(file_loaded, model='large', num_jitters=500)
+                        file_encoded = face_recognition.face_encodings(file_loaded, model=self.model, num_jitters=self.num_jitters)
                         try:
                             # Verifica se a codificação é válida  
                             verificar_codificacao = file_encoded.shape
@@ -210,7 +213,7 @@ class BancoEncodings:
 
         return [ids_list, encoded_faces]
     
-    def _load_encoded_lists(self):
+    def _load_encoded_lists_onefile(self):
 
         with open('dataset_faces.enc', 'rb') as f:
             ids_list, endoded_faces = pickle.load(f)

@@ -3,15 +3,15 @@ import cv2
 
 class ProcessoReconhecimento:
     
-    def __init__(self, detect_param, cam_param, sistemaPrincial, encoded_faces):
+    def __init__(self, detect_param, sistemaPrincipal):
         # self.running define se o while deve estar rodando
         self.running = False
         self.detect_param = detect_param
-        self.cam = cam_param
-        self.encoded_faces = encoded_faces
+        self.cam_obj = sistemaPrincipal.cam_param
+        self.encoded_faces = sistemaPrincipal.encoded_faces
         
         # usar isso para chamar função de notificação do sistema principal
-        self.sistemaPrincipal = sistemaPrincial
+        self.sistemaPrincipal = sistemaPrincipal
         # detect_param e cam_param devem ser dicionários com configurações
         # exemplo: 
 
@@ -29,7 +29,7 @@ class ProcessoReconhecimento:
 
     def process(self):
         # sistema while está rodando
-        self.running = True
+        
         # se o detect_param['detect_method'] == face_recognition ou mediapipe
         # cria o objeto de cada qual e manda detect_param como parâmetro
         #TODO: Colocar opção do mediapipe
@@ -38,6 +38,7 @@ class ProcessoReconhecimento:
         else:
             raise ValueError("detect_settings > detect_method possui valor inválido")
         
+        self.running = True
         face_error = 0
         total_face_encoding = 0
 
@@ -45,20 +46,23 @@ class ProcessoReconhecimento:
         while self.running:
             # tudaoo
             # ler imagem da câmera
-            success, frame = self.cam.read()
+            self.cam_obj.open('http://pas:123@192.168.42.129:8080/video')
+            success, frame = self.cam_obj.read()
             # se leu a imagem da câmera com sucesso continua
             if success:
                 # pega o face_locations(mostrar tempo?)
-                face_locations = objeto_reconhecimento_facial.get_face_locations(frame)
-                
+                face_location = objeto_reconhecimento_facial.get_main_face_location(frame)
+                if face_location:
+                    cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
                 # tem face?
                 # tá perto o suficiente? (usar variável??)
 
                 # se sim, faz a face_encoding com a face_locations que pegamos
                 # usar detect_param['face_encoding_resample'] para escolher
                 # a quantidade de resamples do face encoding
-                if face_locations:
-                    face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_locations)
+                if face_location:
+                    print(face_location)
+                    face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
                     #print(face_encoding) if self.detect_param["DEBUG"] else None
 
                     # comparar face codificada com a lista de faces reconhecidas
@@ -71,6 +75,9 @@ class ProcessoReconhecimento:
                     if found_id:
                         face_error += 1 if not found_id == "AaEsquilo" else 0
                         total_face_encoding += 1
+
+                    
+                        cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 255, 0), 4)
 
                     print(f'FACE ERRORS: {face_error}')
                     print(f'TOTAL FACE ENCODINGS: {total_face_encoding}')

@@ -155,6 +155,7 @@ class uiMainMenu:
             id = self.entrada_ID.get()
             if id:
                 print(f'Usuário {id} removido com sucesso!')
+                
                 self.destroy()
             else:
                 print(f'ID INVÁLIDO')
