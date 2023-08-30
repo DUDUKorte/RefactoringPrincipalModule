@@ -7,13 +7,7 @@ class SistemaPrincipal:
     def __init__(self):
         print(f'INFO: CARREGANDO CONFIGURAÇÕES...')
         # Carregar arquivos de configuração
-        with open("detect_settings.json", 'r') as f:
-            detect_settings = json.load(f)
-        print(f'INFO: DETECT SETTINGS CARREGADO')
-
-        with open("cam_settings.json", 'r') as f:
-            cam_settings = json.load(f)
-        print(f'INFO: CAMERA SETTINGS CARREGADO')
+        self.load_config_files()
 
         # Criação das classes necessárias
         faces_registradas_path = 'F:\DUDU\Programinhas_PC\TCC\ModuloPrincipal\known_faces'
@@ -37,11 +31,11 @@ class SistemaPrincipal:
         #         print(i.shape)
         
         # Cria Câmera e inicializa a classe
-        self.camera = Camera.Camera(cam_settings)
+        self.camera = Camera.Camera(self.cam_settings)
         self.cam_param = self.camera.get_camera_object()
 
         # iniciar o objeto da classe do reconhecimento com os parâmetros
-        self.processoReconhecimento = ProcessoReconhecimento.ProcessoReconhecimento(detect_settings, self)
+        self.processoReconhecimento = ProcessoReconhecimento.ProcessoReconhecimento(self.detect_settings, self)
 
     def start_face_recognition(self):
         # iniciar o sistema de reconhecimento, usar threads
@@ -68,6 +62,14 @@ class SistemaPrincipal:
     def start_register_folder(self):
         self.bancoEncodings.create_face_encoding(True)
         
+    def load_config_files(self):
+        with open("detect_settings.json", 'r') as f:
+            self.detect_settings = json.load(f)
+        print(f'INFO: DETECT SETTINGS CARREGADO')
+
+        with open("cam_settings.json", 'r') as f:
+            self.cam_settings = json.load(f)
+        print(f'INFO: CAMERA SETTINGS CARREGADO')
 
 sys = SistemaPrincipal()
 sys.start_face_recognition()

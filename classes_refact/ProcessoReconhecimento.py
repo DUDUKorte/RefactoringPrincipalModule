@@ -46,7 +46,7 @@ class ProcessoReconhecimento:
         while self.running:
             # tudaoo
             # ler imagem da câmera
-            self.cam_obj.open('http://pas:123@192.168.42.129:8080/video')
+            #self.cam_obj.open('http://pas:123@192.168.42.129:8080/video')
             success, frame = self.cam_obj.read()
             # se leu a imagem da câmera com sucesso continua
             if success:
