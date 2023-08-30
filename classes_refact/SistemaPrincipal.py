@@ -2,6 +2,7 @@ import ProcessoReconhecimento
 import BancoEncodings
 import Camera
 import json
+import debug
 
 class SistemaPrincipal:
     def __init__(self):

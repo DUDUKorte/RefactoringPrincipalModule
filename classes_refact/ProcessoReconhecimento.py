@@ -1,5 +1,6 @@
 import FaceRecognitionMethod
 import cv2
+from debug import *
 
 class ProcessoReconhecimento:
     
@@ -61,7 +62,7 @@ class ProcessoReconhecimento:
                 # usar detect_param['face_encoding_resample'] para escolher
                 # a quantidade de resamples do face encoding
                 if face_location:
-                    print(face_location)
+                    plog(face_location)
                     face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
                     #print(face_encoding) if self.detect_param["DEBUG"] else None
 
@@ -79,9 +80,8 @@ class ProcessoReconhecimento:
                     
                         cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 255, 0), 4)
 
-                    print(f'FACE ERRORS: {face_error}')
-                    print(f'TOTAL FACE ENCODINGS: {total_face_encoding}')
-
+                    plog(f'FACE ERRORS: {face_error}')
+                    plog(f'TOTAL FACE ENCODINGS: {total_face_encoding}')
 
                     # alguma das distâncias é menor ou menor ou igual á tolerância? (0.5 ou 0.4)
                     # sim? então vamos pegar o menor valor da lista (min(valores)?)
