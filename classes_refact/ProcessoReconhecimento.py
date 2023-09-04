@@ -25,7 +25,7 @@ class ProcessoReconhecimento:
         #     'min_detecion_confidence' : 0.5
         #     #outros parâmetros se precisar... 
         # }
-        print('PROCESSO RECONHECIMENTO CRIADO')
+        plog('PROCESSO RECONHECIMENTO CRIADO')
         pass
 
     def process(self):

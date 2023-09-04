@@ -1,6 +1,7 @@
 import ProcessoReconhecimento
 import BancoEncodings
 import Camera
+import ModuloDeTestes
 import json
 from debug import *
 
@@ -58,7 +59,8 @@ class SistemaPrincipal:
         pass
 
     def start_test_module(self):
-        pass
+        obj_modulo_de_testes = ModuloDeTestes.ModuloDeTestes(self.detect_settings, self)
+        obj_modulo_de_testes.inicar_teste()
 
     def start_register_folder(self):
         self.bancoEncodings.create_face_encoding(True)
@@ -73,4 +75,5 @@ class SistemaPrincipal:
         print(f'INFO: CAMERA SETTINGS CARREGADO')
 
 sys = SistemaPrincipal()
-sys.start_face_recognition()
+#sys.start_face_recognition()
+sys.start_test_module()
