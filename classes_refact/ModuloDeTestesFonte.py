@@ -86,5 +86,4 @@ if __name__ == '__main__':
     test = ModuloDeTestesFonte()
     test.getParametrosDeTeste()
     if test.paremtros_obtidos:
-        test._gerarPlanilha('Teste_refactored')
-
+        test.gerarPlanilha('Teste_refactored')

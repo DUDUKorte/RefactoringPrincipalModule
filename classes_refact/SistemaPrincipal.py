@@ -12,8 +12,8 @@ class SistemaPrincipal:
         self.load_config_files()
 
         # Criação das classes necessárias
-        faces_registradas_path = 'F:\DUDU\Programinhas_PC\TCC\ModuloPrincipal\known_faces'
-        self.bancoEncodings = BancoEncodings.BancoEncodings(faces_registradas_path)
+        self.faces_registradas_path = 'F:\DUDU\Programinhas_PC\TCC\ModuloPrincipal\known_faces'
+        self.bancoEncodings = BancoEncodings.BancoEncodings(self.faces_registradas_path)
 
         # primeiras operações do sistema, carregar tudo, iniciar câmera, etc
         #encoded_faces = self.bancoEncodings.load_face_encoding()
@@ -53,6 +53,9 @@ class SistemaPrincipal:
         pass
 
     def start_user_register(self):
+        #AQUI tu faz o módulo de registro
+        #obj_modulo_de_cadastro = ModuloDeCadastro.ModuoDeCadastro()
+        #obj_modulo_de_cadastro.inicar_cadatro()
         pass
 
     def start_user_remove(self):
@@ -60,7 +63,7 @@ class SistemaPrincipal:
 
     def start_test_module(self):
         obj_modulo_de_testes = ModuloDeTestes.ModuloDeTestes(self.detect_settings, self)
-        obj_modulo_de_testes.inicar_teste()
+        obj_modulo_de_testes.inicar_teste('PlanilhaTeste01')
 
     def start_register_folder(self):
         self.bancoEncodings.create_face_encoding(True)
@@ -76,4 +79,4 @@ class SistemaPrincipal:
 
 sys = SistemaPrincipal()
 #sys.start_face_recognition()
-sys.start_test_module()
+#sys.start_test_module()

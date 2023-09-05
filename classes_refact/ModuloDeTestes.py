@@ -10,13 +10,14 @@ class ModuloDeTestes:
         self.cam_obj = sistemaPrincipal.cam_param
         self.encoded_faces = sistemaPrincipal.encoded_faces
         self.sistemaPrincipal = sistemaPrincipal
+        self.path = sistemaPrincipal.faces_registradas_path
+        
 
-    def inicar_teste(self):
+    def inicar_teste(self, nome_da_planlha: str = 'Default'):
         # Inicializar o objeto do módulo de testes e receber os parâmetros
         obj_ModuloFonte = ModuloDeTestesFonte.ModuloDeTestesFonte()
         obj_ModuloFonte.getParametrosDeTeste()
         obj_ModuloFonte.rostos_utilizados = len(self.encoded_faces[0])
-
 
         # Criar threads aqui
         thread_contagem_1 = threading.Thread(target=self._contagem_regressiva)
@@ -39,7 +40,7 @@ class ModuloDeTestes:
         obj_ModuloFonte.rostos_corretos = self.total_face_encoding - self.face_error
         
         # Gerar Planilha e Terminar Processo de testes
-        obj_ModuloFonte.gerarPlanilha('TesteTal')
+        obj_ModuloFonte.gerarPlanilha(nome_da_planlha)
 
     def _contagem_regressiva(self, segundos: int = 10):
         for i in range(segundos):
