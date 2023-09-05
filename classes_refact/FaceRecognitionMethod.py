@@ -1,12 +1,7 @@
 import face_recognition
 import numpy as np
 import time
-
-print_debug = True
-
-def plog(log):
-    if print_debug:
-        print(log)
+from debug import *
 
 class FaceRecognitionMethod:
     def __init__(self, detect_params):
@@ -78,13 +73,13 @@ class FaceRecognitionMethod:
         encoded_faces = list(encoded_faces.values())
 
         face_distances = list(face_recognition.face_distance(encoded_faces, face_encoding))
-        print(face_distances)
+        plog(face_distances)
         # Pega os menores valores de cada face
         min_distances = list(min(distance) for distance in face_distances) 
         # verificar se a lista são só números ou algoa a mais
 
         if min(min_distances) <= self.tolerance:
-            print(names[min_distances.index(min(min_distances))]) 
+            plog(names[min_distances.index(min(min_distances))]) 
 
             linha_correta = min_distances.index(min(min_distances)) #TODO:  TESTAR ISSO AQUI
             return encoded_faces[0, linha_correta] # isso deve ser o id que queremos
@@ -99,7 +94,7 @@ class FaceRecognitionMethod:
         
         ids = encoded_faces[0]
         encoded_faces = encoded_faces[1]
-        print(f'TOTAL FACES TO COMPARE: {len(ids)}')
+        plog(f'TOTAL FACES TO COMPARE: {len(ids)}')
 
         comparision_start = time.time()
         if not distance:
@@ -109,7 +104,7 @@ class FaceRecognitionMethod:
             if True in results:
                 match = ids[results.index(True)]
                 comparision_end = time.time()
-                print(f'COMPARISION TIME : {comparision_end - comparision_start}')
+                plog(f'COMPARISION TIME : {comparision_end - comparision_start}')
                 return match
             else:
                 return None
@@ -120,7 +115,7 @@ class FaceRecognitionMethod:
             if min_face_distance <= self.tolerance:
                 match = ids[face_distances.index(min_face_distance)]
                 comparision_end = time.time()
-                print(f'COMPARISION TIME : {comparision_end - comparision_start}')
+                plog(f'COMPARISION TIME : {comparision_end - comparision_start}')
                 return match
             else:
                 return None

@@ -219,3 +219,9 @@ class BancoEncodings:
             ids_list, endoded_faces = pickle.load(f)
 
         return [ids_list, endoded_faces]
+
+    def _registrar_novo_usuario(self, tmp_caminho_fotos):
+        #nome_do_aluno = 'ricardão'
+        #os.makedirs(f'{self.path}/{nome_do_aluno}')
+        #salvar_foto(f'{self.path}/{nome_do_aluno}/')
+        pass
