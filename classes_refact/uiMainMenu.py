@@ -144,7 +144,6 @@ class uiMainMenu:
             self.entrada_ID.pack(pady = 12, padx=10)
 
             # Opções
-            check = True
             self.opcao_carregar_codificacao = customtkinter.CTkCheckBox(master=self.frame, text="Recarregar Usuários cadastrados")
             self.opcao_carregar_codificacao.pack(pady=12, padx=10)
             self.opcao_carregar_codificacao.select()
@@ -165,7 +164,7 @@ class uiMainMenu:
     class janelaModuloTestes(customtkinter.CTkToplevel):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            self.geometry("400x300")
+            self.geometry("800x600")
             self.title("Test Module")
 
             # Quadrado pra ficar bonito
@@ -175,6 +174,19 @@ class uiMainMenu:
             # Texto que apareçe no topo da tela
             self.label = customtkinter.CTkLabel(master=self.frame, text="Módulo de testes")
             self.label.pack(pady=12, padx=10)
+
+            # Opções
+            self.opcao_carregar_codificacao = customtkinter.CTkCheckBox(master=self.frame, text="360p")
+            self.opcao_carregar_codificacao.pack(pady=12, padx=10)
+            # Opções
+            self.opcao_carregar_codificacao = customtkinter.CTkCheckBox(master=self.frame, text="480p")
+            self.opcao_carregar_codificacao.pack(pady=12, padx=10)
+            # Opções
+            self.opcao_carregar_codificacao = customtkinter.CTkCheckBox(master=self.frame, text="720p")
+            self.opcao_carregar_codificacao.pack(pady=12, padx=10)
+            # Opções
+            self.opcao_carregar_codificacao = customtkinter.CTkCheckBox(master=self.frame, text="1080p")
+            self.opcao_carregar_codificacao.pack(pady=12, padx=10)
 
             uiMainMenu._adicionar_botao(self, master=self.frame, text="Encerrar Testes", command=self.encerrar_testes)
 
