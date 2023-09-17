@@ -6,14 +6,19 @@ import json
 from debug import *
 
 class SistemaPrincipal:
-    def __init__(self):
+    def __init__(self): 
+
         print(f'INFO: CARREGANDO CONFIGURAÇÕES...')
         # Carregar arquivos de configuração
         self.load_config_files()
 
         # Criação das classes necessárias
         self.faces_registradas_path = 'F:\DUDU\Programinhas_PC\TCC\ModuloPrincipal\known_faces'
+        #self.faces_registradas_path = 'known_50_faces_test'
         self.bancoEncodings = BancoEncodings.BancoEncodings(self.faces_registradas_path)
+        
+        #FUNCIONA!!!!
+        #self.bancoEncodings._encode_all_faces_list()
 
         # primeiras operações do sistema, carregar tudo, iniciar câmera, etc
         #encoded_faces = self.bancoEncodings.load_face_encoding()
@@ -77,6 +82,8 @@ class SistemaPrincipal:
             self.cam_settings = json.load(f)
         print(f'INFO: CAMERA SETTINGS CARREGADO')
 
-sys = SistemaPrincipal()
-#sys.start_face_recognition()
-#sys.start_test_module()
+
+if __name__ == '__main__':
+    sys = SistemaPrincipal()
+    sys.start_face_recognition()
+    #sys.start_test_module()

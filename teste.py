@@ -1,2 +1,1 @@
-import dlib
-print(dlib.DLIB_USE_CUDA)
+import cv2

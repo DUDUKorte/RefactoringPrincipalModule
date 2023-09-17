@@ -17,13 +17,9 @@ class FaceRecognitionMethod:
         main_face_location = None
         i=0
 
-        for face_location in zip(face_locations,):
+        for (top, right, bottom, left), in zip(face_locations,):
             i+=1
-            face_location = face_location[0]
-            top = face_location[0]
-            right = face_location[1]            
-            bottom = face_location[2]
-            left = face_location[3]
+            face_location = (top, right, bottom, left)
             largura = right-left
             altura = bottom - top
             frame_height, frame_width, frame_channels = frame.shape
@@ -45,9 +41,6 @@ class FaceRecognitionMethod:
                 main_face_location = face_location
         
         plog(f'MAIOR ÁREA ENCONTRADA: {maior_area}')
-
-
-
         return main_face_location
 
     def get_face_locations(self, frame):
@@ -110,10 +103,10 @@ class FaceRecognitionMethod:
                 return None
         else:
             # Utilizando o método com face distance
-            face_distances = list(face_recognition.face_distance(encoded_faces, face_encoding))
-            min_face_distance = min(face_distances)
-            if min_face_distance <= self.tolerance:
-                match = ids[face_distances.index(min_face_distance)]
+            face_distances = face_recognition.face_distance(encoded_faces, face_encoding)
+            min_face_distance = np.argmin(face_distances)
+            if face_distances[min_face_distance] <= self.tolerance:
+                match = ids[min_face_distance]
                 comparision_end = time.time()
                 plog(f'COMPARISION TIME : {comparision_end - comparision_start}')
                 return match

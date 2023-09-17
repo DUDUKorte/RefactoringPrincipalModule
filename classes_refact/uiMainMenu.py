@@ -1,11 +1,12 @@
-import customtkinter
+import customtkinter, time, threading
+import SistemaPrincipal
 
 # O MENU AINDA NÃO É FUNCIONAL, É APENAS UMA PRÉVIA
 
 class uiMainMenu:
     def __init__(self):
         customtkinter.set_appearance_mode("dark")
-        customtkinter.set_default_color_theme("dark-blue")        
+        customtkinter.set_default_color_theme("dark-blue")
 
     def _adicionar_botao(self, master, text, command):
         self.button = customtkinter.CTkButton(master=master, text=text, command=command)
