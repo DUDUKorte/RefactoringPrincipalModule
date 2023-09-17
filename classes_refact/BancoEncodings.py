@@ -3,6 +3,7 @@ import pickle
 import os
 import face_recognition
 import random
+from debug import *
 
 class BancoEncodings:
     def __init__(self, path):
@@ -10,45 +11,145 @@ class BancoEncodings:
         # Converter o caminho ('C:/pasta/pasta/pasta') para o caminho do sistema normal
         drive_letter = self.path[:2]
         self.path = os.path.join(*self.path[2:].split('/'))
-        self.path = drive_letter+'\\'+self.path
+        self.path = drive_letter+'{self.slash}'+self.path
+        self.path = 'known_50_faces_test'
+        self.slash = '/'
 
         self.model='large' 
-        self.num_jitters=500
+        self.num_jitters=1
 
-    def create_face_encoding(self, force = False):
-        # path.split('/')?
-        # os.path.join(pasta, pasta, pasta) << caminho de pasta funcional para qualquer OS
+    # carrega um arquivo .enc específico
+    def _load_enc_file(self, specific_path):
+            with open(f'{specific_path}.enc', 'rb') as f:
+                ids_list, endoded_faces = pickle.load(f)
+                plog(f'INFO: .enc file loaded: {specific_path}.enc')
 
-        # varrer as pastas se não tiver o .enc, criar
-        # /pessoas/id/imagens 
-                            #1.jpg
-                            #2.jpg
-                            #Exemplos dos codificados (.enc)
-                            #1.enc (objeto numpy)
-                            #2.enc (objeto numpy)
+            return [ids_list, endoded_faces]
+
+    # salva um arquivo .enc específico em um diretório
+    def _save_enc_file(self, encoded_faces, specific_path = None):
+        if not specific_path:
+            with open('dataset_faces.enc', 'wb') as f:
+                pickle.dump(encoded_faces, f)
+        else:
+            with open(f'{specific_path}.enc', 'wb') as f:
+                pickle.dump(encoded_faces, f)
+
+# FUNÇÕES COM ENCODE E LOAD DE TODAS AS FACES POR ARQUIVO COM LISTAS ===========================================================================
+
+    # Apenas faz o encoding de todas as faces e salva o arquivo .enc para cada foto
+    def _encode_all_faces_list(self, force = False):
+        for ids in os.listdir(self.path):
+            for file in os.listdir(f'{self.path}{self.slash}{ids}'):
+                if not f'{self.path}{self.slash}{ids}{self.slash}{file}'.endswith('.enc'):
+                    if not os.path.exists(f'{self.path}{self.slash}{ids}{self.slash}{file}.enc') or force:
+                        plog(f'CODIFICANDO FACE: {ids}...')
+                        #fazer encoding, criar arquivo e salvar
+                        file_loaded = face_recognition.load_image_file(f'{self.path}{self.slash}{ids}{self.slash}{file}')
+                        # Dependendo da versão da biblioteca face_recognition precisa usar [0]
+                        file_encoded = face_recognition.face_encodings(file_loaded, model=self.model, num_jitters=self.num_jitters)[0]
+                        #file_encoded = face_recognition.face_encodings(file_loaded, model=self.model, num_jitters=self.num_jitters)
+                        
+                        try:
+                            verificar_codificacao = file_encoded.shape
+                            codificacao_bem_sucedida = True
+                        except:
+                            codificacao_bem_sucedida = False
+                        if codificacao_bem_sucedida:
+                            #Salvar arquivo
+                            self._save_enc_file([ids, file_encoded], f'{self.path}{self.slash}{ids}{self.slash}{file}')
+                            plog(f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                        else:
+                            plog(f'ERRO AO CODIFICAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                    else:
+                        plog(f'INFO: CODIFICAÇÃO JÁ EXISTENTE: {self.path}{self.slash}{ids}{self.slash}{file}')
+
+    # Apenas carrega todas as codificações para listas e retorna elas
+    def _load_all_faces_list(self):
+        ids_list = []
+        encoded_faces_list = []
 
         for ids in os.listdir(self.path):
-            for file in os.listdir(f'{self.path}\\{ids}'):
-                if not f'{self.path}\\{ids}\\{file}'.endswith('.enc'):
-                    if not os.path.exists(f'{self.path}\\{ids}\\{file}.enc') or force == True:
+            for file in os.listdir(f'{self.path}{self.slash}{ids}'):
+                if f'{self.path}{self.slash}{ids}{self.slash}{file}'.endswith('.enc') and os.path.exists(f'{self.path}{self.slash}{ids}{self.slash}{file}.enc'):
+                    #fazer encoding, criar arquivo e salvar
+                    try:
+                        tmp_id, tmp_encode = self._load_enc_file(f'{self.path}{self.slash}{ids}{self.slash}{file}')
+                        ids_list.append(tmp_id)
+                        encoded_faces_list.append(tmp_encode)
+                    except:
+                        plog(f'ERRO AO CARREGAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                else:
+                    plog(f'INFO: CODIFICAÇÃO NÃO EXISTENTE: {self.path}{self.slash}{ids}{self.slash}{file}')
+        return [ids_list, encoded_faces_list]
+
+# FUNÇÕES COM APENAS UM ARQUIVO E COM LISTA ===========================================================================
+
+    # Cria o encoding de todas as faces em um arquivo, armazena em uma lista e salva tudo em um arquivo apenas, em seguida retorna a lista
+    def _encode_all_faces_onefile(self, force = True):
+        ids_list = []
+        encoded_faces = []
+        for ids in os.listdir(self.path):
+            for file in os.listdir(f'{self.path}{self.slash}{ids}'):
+                if not f'{self.path}{self.slash}{ids}{self.slash}{file}'.endswith('.enc'):
+                    if not os.path.exists(f'{self.path}{self.slash}{ids}{self.slash}{file}.enc') or force == True:
                         # Fazer encoding do arquivo se não existir e salvar como .enc
-                        file_loaded = face_recognition.load_image_file(f'{self.path}\\{ids}\\{file}')
-                        file_encoded = face_recognition.face_encodings(file_loaded, model='large', num_jitters=500)
+                        file_loaded = face_recognition.load_image_file(f'{self.path}{self.slash}{ids}{self.slash}{file}')
+                        file_encoded = face_recognition.face_encodings(file_loaded, model=self.model, num_jitters=self.num_jitters)
                         try:
-                            file_encoded = file_encoded[0]
+                            # Verifica se a codificação é válida  
+                            verificar_codificacao = file_encoded.shape
+                            codificacao_bem_sucedida = True
                         except:
-                            file_encoded = file_encoded
+                            codificacao_bem_sucedida = False
 
-                        pessoa_codificada = {ids : file_encoded}
-                        with open(f'{self.path}\\{ids}\\{file}.enc', 'wb') as f:
-                            pickle.dump(pessoa_codificada, f)
-                        print('criado para ' + ids)
-                        print(file_encoded.shape)
+                        if codificacao_bem_sucedida:
+                            ids_list.append(ids)
+                            encoded_faces.append(file_encoded)
+                            print(f'INFO: Codificação {ids} - OK')
+                            #print(file_encoded.shape)
+                        else:
+                            print(f'INFO: Codificação {ids} - FALHA')
 
-                    elif os.path.exists(f'{self.path}\\{ids}\\{file}.enc'):
+                    elif os.path.exists(f'{self.path}{self.slash}{ids}{self.slash}{file}.pkl'):
                         print('já existe')
                         continue
 
+        self._save_enc_file([ids_list, encoded_faces])
+
+        return [ids_list, encoded_faces]
+    
+    # Carrega um arquivo específico .enc com todos os ids e faces
+    def _load_encoded_lists_onefile(self):
+        with open('dataset_faces.enc', 'rb') as f:
+            ids_list, endoded_faces = pickle.load(f)
+        return [ids_list, endoded_faces]
+
+    #TODO IMPLEMENTAR AS FUNÇÕES DE REGISTRAR USUÁRIO
+    def _registrar_novo_usuario(self, tmp_caminho_fotos):
+        #nome_do_aluno = 'ricardão'
+        #os.makedirs(f'{self.path}/{nome_do_aluno}')
+        #salvar_foto(f'{self.path}/{nome_do_aluno}/')
+        pass
+
+    #TODO IMPLEMENTAR
+    def insert_face(self, id, image, encoding = True, load_encoding = True):
+        # encoded_aces append
+        # pega id/cria id/recebe id
+        # cria pasta com id dentro do self.path
+        # se encoding = True, realiza o encoding e salva na pasta
+        # se load_encoding = True, carrega os valores do id e face no encoded_faces e atualiza
+        pass
+
+    #TODO IMPLEMENTAR
+    def remove_id(self, id, load_encoding = True):
+        # remover encoded_faces
+        # apagar pastas com os IDs
+        # remover id de encoded_faces
+        # atualiza o encoding se load_encoding = True
+        pass
+
+    # Aqui seria a função de carregar os .enc do banco de dados online real
     def load_face_encoding(self):
         # varrer as pastas e carregar .enc
         #exemplo do sistema da variável com encodings:
@@ -134,94 +235,3 @@ class BancoEncodings:
 
         print('CARREGANDO FACE ENCODINGS CONHECIDOS')
         return 0
-    
-    def insert_face(self, id, image, encoding = True, load_encoding = True):
-        # encoded_aces append
-        # pega id/cria id/recebe id
-        # cria pasta com id dentro do self.path
-        # se encoding = True, realiza o encoding e salva na pasta
-        # se load_encoding = True, carrega os valores do id e face no encoded_faces e atualiza
-        pass
-
-    def remove_id(self, id, load_encoding = True):
-        # remover encoded_faces
-        # apagar pastas com os IDs
-        # remover id de encoded_faces
-        # atualiza o encoding se load_encoding = True
-        pass
-
-    def save_face_encodings(self, encoded_faces):
-        with open('dataset_faces.enc', 'wb') as f:
-            pickle.dump(encoded_faces, f)
-
-    def encode_all_faces(self):
-#        with open('dataset_faces.enc', 'rb') as f:
-#            encoded_faces = pickle.load(f)
-        encoded_faces = dict()
-
-        for ids in os.listdir(self.path):
-            for file in os.listdir(f'{self.path}\\{ids}'):
-                if not f'{self.path}\\{ids}\\{file}'.endswith('.enc'):
-                    if os.path.exists(f'{self.path}\\{ids}\\{file}.enc'):
-                        #Faz o load
-                        with open(f'{self.path}\\{ids}\\{file}.enc', 'rb') as f:
-                            tmp_noname = pickle.load(f)
-                            #tmp_noname = {'ids': nparray}
-                            print(tmp_noname)
-                            tmp_key = list(tmp_noname.keys())[0]
-                            tmp_value = np.array(list(tmp_noname.values())[0])  
-
-                            if tmp_key in encoded_faces:
-                                tmp_key = tmp_key+str(random.randint(10, 99))
-                            encoded_faces[tmp_key] = [tmp_value]
-
-                    elif not os.path.exists(f'{self.path}\\{ids}\\{file}.enc'):
-                        print(f'{file}.enc não existe')
-        
-        return encoded_faces
-    
-    def _encode_all_faces_onefile(self, force = True):
-        ids_list = []
-        encoded_faces = []
-        for ids in os.listdir(self.path):
-            for file in os.listdir(f'{self.path}\\{ids}'):
-                if not f'{self.path}\\{ids}\\{file}'.endswith('.enc'):
-                    if not os.path.exists(f'{self.path}\\{ids}\\{file}.enc') or force == True:
-                        # Fazer encoding do arquivo se não existir e salvar como .enc
-                        file_loaded = face_recognition.load_image_file(f'{self.path}\\{ids}\\{file}')
-                        file_encoded = face_recognition.face_encodings(file_loaded, model=self.model, num_jitters=self.num_jitters)
-                        try:
-                            # Verifica se a codificação é válida  
-                            verificar_codificacao = file_encoded.shape
-                            codificacao_bem_sucedida = True
-                        except:
-                            codificacao_bem_sucedida = False
-
-                        if codificacao_bem_sucedida:
-                            ids_list.append(ids)
-                            encoded_faces.append(file_encoded)
-                            print(f'INFO: Codificação {ids} - OK')
-                            #print(file_encoded.shape)
-                        else:
-                            print(f'INFO: Codificação {ids} - FALHA')
-
-                    elif os.path.exists(f'{self.path}\\{ids}\\{file}.pkl'):
-                        print('já existe')
-                        continue
-
-        self._save_face_encodings([ids_list, encoded_faces])
-
-        return [ids_list, encoded_faces]
-    
-    def _load_encoded_lists_onefile(self):
-
-        with open('dataset_faces.enc', 'rb') as f:
-            ids_list, endoded_faces = pickle.load(f)
-
-        return [ids_list, endoded_faces]
-
-    def _registrar_novo_usuario(self, tmp_caminho_fotos):
-        #nome_do_aluno = 'ricardão'
-        #os.makedirs(f'{self.path}/{nome_do_aluno}')
-        #salvar_foto(f'{self.path}/{nome_do_aluno}/')
-        pass
