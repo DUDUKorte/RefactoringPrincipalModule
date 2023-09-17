@@ -1,6 +1,7 @@
 # Quick Installation Guide
-Main Face Recognition Module
 
+## Main Face Recognition Module
+ 
 This Project is under development
 ---
 # Pre-Requirements
