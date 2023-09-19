@@ -2,14 +2,20 @@ import face_recognition
 import numpy as np
 import time
 from debug import *
+from liveness_detection_src import liveness_detection
 
 class FaceRecognitionMethod:
     def __init__(self, detect_params):
-        self.model = detect_params['model']
-        self.locations_upsample = detect_params['locations_upsample']
-        self.encoding_resample = detect_params['face_encoding_resample']
-        self.tolerance = detect_params['tolerance']
-        self.distance = detect_params['distance_percentage']
+        try:
+            self.liveness_detector = liveness_detection.liveness_detector()
+            self.model = detect_params['model']
+            self.locations_upsample = detect_params['locations_upsample']
+            self.encoding_resample = detect_params['face_encoding_resample']
+            self.tolerance = detect_params['tolerance']
+            self.distance = detect_params['distance_percentage']
+            self.liveness_detection = detect_params['liveness_detection']
+        except:
+            pass
 
     def get_main_face_location(self, frame):
         face_locations = self.get_face_locations(frame)
@@ -78,7 +84,13 @@ class FaceRecognitionMethod:
             return encoded_faces[0, linha_correta] # isso deve ser o id que queremos
         else:
             return None
-        
+    
+    def detect_liveness(self, frame, face_location):
+        if self.liveness_detection:
+            return self.liveness_detector.detect_liveness(frame, face_location)
+        else:
+            return True
+
     def _decode_face_lists(self, encoded_faces, face_encoding, distance = False):
         try:
             face_encoding = face_encoding[0]
@@ -112,3 +124,7 @@ class FaceRecognitionMethod:
                 return match
             else:
                 return None
+
+if __name__ == "__main__":
+    teste = FaceRecognitionMethod(4)
+    teste.liveness_detector(None, None)

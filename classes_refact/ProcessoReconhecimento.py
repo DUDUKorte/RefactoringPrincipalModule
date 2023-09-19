@@ -12,6 +12,7 @@ class ProcessoReconhecimento:
         self.cam_obj = sistemaPrincipal.cam_param
         self.encoded_faces = sistemaPrincipal.encoded_faces
         
+        
         # usar isso para chamar função de notificação do sistema principal
         self.sistemaPrincipal = sistemaPrincipal
         # detect_param e cam_param devem ser dicionários com configurações
@@ -58,9 +59,12 @@ class ProcessoReconhecimento:
                 frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
 
                 # pega o face_locations(mostrar tempo?)
+                encoding_start = time.time()
                 face_location = objeto_reconhecimento_facial.get_main_face_location(frame)
                 if face_location:
-                    cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
+                    #cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
+                    rectanglelog(frame=bgr_frame, locations=face_location, color=(0,0,255), thickness=1)
+
                 # tem face?
                 # tá perto o suficiente? (usar variável??)
 
@@ -69,39 +73,49 @@ class ProcessoReconhecimento:
                 # a quantidade de resamples do face encoding
                 if face_location:
                     plog(face_location)
-                    encoding_start = time.time()
-                    face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
-                    #print(face_encoding) if self.detect_param["DEBUG"] else None
-
-                    # comparar face codificada com a lista de faces reconhecidas
-                    # (usar face_distance)
-                    #found_id = objeto_reconhecimento_facial.decode_face(self.encoded_faces, face_encoding)
                     
-                    #Faz a codificação utilizando listas
-                    found_id = objeto_reconhecimento_facial._decode_face_lists(self.encoded_faces, face_encoding, True)
-                    encoding_end = time.time()
-                    
-                    if found_id:
-                        tempo_registrado.append(encoding_end-encoding_start)
-                        face_error += 1 if not found_id == "AaEsquilo" else 0
-                        total_face_encoding += 1
+                    #Verifica se é uma face verdadeira ou não
+                    if objeto_reconhecimento_facial.detect_liveness(frame, face_location):
+                        plog("Face Real")
+                        textlog(frame=bgr_frame, text="Face Real", locations=face_location, bottom=True)
 
-                    
-                        cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 255, 0), 4)
-                        cv2.putText(bgr_frame, found_id, (face_location[3]+6, face_location[0]-6), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 1)
+                        face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
+                        #print(face_encoding) if self.detect_param["DEBUG"] else None
 
-                    plog(f'FACE ERRORS: {face_error}')
-                    plog(f'TOTAL FACE ENCODINGS: {total_face_encoding}')
-                    tempo_médio = (sum(tempo_registrado)/len(tempo_registrado)) if len(tempo_registrado) != 0 else 0
-                    plog(f'Tempo Médio: {tempo_médio}')
+                        # comparar face codificada com a lista de faces reconhecidas
+                        # (usar face_distance)
+                        #found_id = objeto_reconhecimento_facial.decode_face(self.encoded_faces, face_encoding)
 
-                    # alguma das distâncias é menor ou menor ou igual á tolerância? (0.5 ou 0.4)
-                    # sim? então vamos pegar o menor valor da lista (min(valores)?)
-                    
-                    # pegar a primeira coluna (ID) da mesma linha que tem o encoding encontrado
-                    # notificar sistema principal com o id reconhecido
+                        #Faz a codificação utilizando listas
+                        found_id = objeto_reconhecimento_facial._decode_face_lists(self.encoded_faces, face_encoding, True)
+                        encoding_end = time.time()
+                        
+                        if found_id:
+                            tempo_registrado.append(encoding_end-encoding_start)
+                            face_error += 1 if not found_id == "AaEsquilo" else 0
+                            total_face_encoding += 1
 
-                    self.sistemaPrincipal.notificacaoReconhecimento(found_id)
+                        
+                            #cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 255, 0), 4)
+                            rectanglelog(frame=bgr_frame, locations=face_location, color=(0,255,0), thickness=4)
+                            #cv2.putText(bgr_frame, found_id, (face_location[3]+6, face_location[0]-6), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 1)
+                            textlog(frame=bgr_frame, text=found_id, locations=face_location, font=cv2.FONT_HERSHEY_COMPLEX, font_size=1, color=(0,255,0), thickness=1)
+
+                        plog(f'FACE ERRORS: {face_error}')
+                        plog(f'TOTAL FACE ENCODINGS: {total_face_encoding}')
+                        tempo_médio = (sum(tempo_registrado)/len(tempo_registrado)) if len(tempo_registrado) != 0 else 0
+                        plog(f'Tempo Médio: {tempo_médio}')
+
+                        # alguma das distâncias é menor ou menor ou igual á tolerância? (0.5 ou 0.4)
+                        # sim? então vamos pegar o menor valor da lista (min(valores)?)
+                        
+                        # pegar a primeira coluna (ID) da mesma linha que tem o encoding encontrado
+                        # notificar sistema principal com o id reconhecido
+
+                        self.sistemaPrincipal.notificacaoReconhecimento(found_id)
+                    else:
+                        plog("Face FAKE")
+                        textlog(frame=bgr_frame, text="Face Fake", locations=face_location, bottom=True, color=(0, 0, 255))
 
             # atualiza o frame?? se não for mostrar na tela, não
             # se for mostrar na tela, usar variável DEBUG para testes
