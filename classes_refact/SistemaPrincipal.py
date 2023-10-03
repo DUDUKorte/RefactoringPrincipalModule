@@ -54,7 +54,7 @@ class SistemaPrincipal:
     def notificacaoReconhecimento(self, id):
         # notificar o banco de dados com o id do aluno reconhecido
         # no sistema do reconhecimento facial
-        print(id)
+        plog(id)
         pass
 
     def start_user_register(self):
