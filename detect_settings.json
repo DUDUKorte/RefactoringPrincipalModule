@@ -1,11 +1,11 @@
 {
 "detect_method" : "face_recognition",
-"face_encoding_resample" : 1,
+"face_encoding_resample" : 0,
 "model" : "hog",
 "locations_upsample" : 0,
-"tolerance" : 0.4,
+"tolerance" : 0.45,
 "min_detection_confidence" : 0.4,
 "distance_percentage" : 0.13,
-"liveness_detection" : true,
+"liveness_detection" : false,
 "DEBUG" : true
 }

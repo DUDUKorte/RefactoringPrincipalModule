@@ -1,7 +1,6 @@
 import os
 import cv2
 import numpy as np
-import argparse
 import warnings
 import time
 
@@ -13,7 +12,7 @@ warnings.filterwarnings('ignore')
 
 class liveness_detector:
     def __init__(self, 
-                model_dir = "./classes_refact/liveness_detection_src/resources/anti_spoof_models", 
+                model_dir = "./resources/anti_spoof_models", 
                 device_id = 0):
         
         self.model_dir = model_dir
