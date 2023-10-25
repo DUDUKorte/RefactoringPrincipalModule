@@ -6,19 +6,16 @@ from liveness_detection_src import liveness_detection
 
 class FaceRecognitionMethod:
     def __init__(self, detect_settings):
-        try:
-            self.liveness_detector = liveness_detection.liveness_detector()
-            self.model = detect_settings['model']
-            self.locations_upsample = detect_settings['locations_upsample']
-            self.encoding_resample = detect_settings['face_encoding_resample']
-            self.tolerance = detect_settings['tolerance']
-            self.distance = detect_settings['distance_percentage']
-            self.liveness_detection = detect_settings['liveness_detection']
-        except:
-            pass
+        self.liveness_detector = liveness_detection.liveness_detector()
+        self.model = detect_settings['model']
+        self.locations_upsample = detect_settings['locations_upsample']
+        self.encoding_resample = detect_settings['face_encoding_resample']
+        self.tolerance = detect_settings['tolerance']
+        self.distance = detect_settings['distance_percentage']
+        self.liveness_detection = detect_settings['liveness_detection']
 
     def get_main_face_location(self, frame):
-        face_locations = self.get_face_locations(frame)
+        face_locations = self._get_face_locations(frame)
         maior_area = 0
         main_face_location = None
         i=0
@@ -53,16 +50,12 @@ class FaceRecognitionMethod:
         plog(f'MAIOR ÁREA ENCONTRADA: {maior_area}')
         return main_face_location
 
-    def get_face_locations(self, frame):
+    def _get_face_locations(self, frame):
         # código reutilizado do sistema anterior
         face_locations = face_recognition.face_locations(frame, self.locations_upsample, self.model)
-        #if face_locations:
         return face_locations
     
     def get_encoded_face(self, frame, locations):
-        # for face_location in zip(locations):
-        #     face_location = [face_location[0]]
-        #     print('FACE ENCODED')
         return face_recognition.face_encodings(frame, [locations], self.encoding_resample, 'large')
 
     def decode_face(self, encoded_faces, face_encoding):
@@ -91,11 +84,12 @@ class FaceRecognitionMethod:
     
     def detect_liveness(self, frame, face_location):
         if self.liveness_detection:
+            #True = Rosto real - False = Foto/Imagm
             return self.liveness_detector.detect_liveness(frame, face_location)
         else:
             return True
 
-    def _decode_face_lists(self, encoded_faces, face_encoding, distance = False):
+    def decode_face_lists(self, encoded_faces, face_encoding, distance = False):
         try:
             face_encoding = face_encoding[0]
         except:
@@ -128,7 +122,3 @@ class FaceRecognitionMethod:
                 return match
             else:
                 return None
-
-if __name__ == "__main__":
-    teste = FaceRecognitionMethod(4)
-    teste.liveness_detector(None, None)

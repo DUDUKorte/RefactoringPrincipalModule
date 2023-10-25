@@ -1,4 +1,4 @@
-import time, threading, cv2, os
+import time, threading, os
 
 class ModuloDeCadastro:
     def __init__(self, id=None, codificarFace=True, carregarCodificacao=True, sistema_principal=None):
@@ -66,26 +66,10 @@ class ModuloDeCadastro:
         print('CONTAGEM REGRESSIVA TERMINADA')
 
     def _salvar_fotos(self):
-        # lógica para salvar as fotos
-        # Verifique se a codificação da face está ativada
-        if not os.path.exists(f'{self.path}/{self.id}'):
-            # Verifique se o local de destino existe; se não cria
-            os.makedirs(f'{self.path}/{self.id}')
-        else:
-            if input('ID já cadastrado, deseja sobrescrever arquivos?').lower()[0] == 's':
-                pass
-            else:
-                return 0
-
-        # Salve as fotos no diretório
-        for i, foto in enumerate(self.lista_de_fotos):
-            nome_do_arquivo = os.path.join(f'{self.path}/{self.id}', f'foto_{i}.jpg')
-            cv2.imwrite(nome_do_arquivo, foto)
-            #Salva arquivo .enc
-        if self.codificarFace:
-            self.bancoEncodings._encode_all_faces_list(force=False)
+        self.bancoEncodings.registrar_novo_usuario(id=self.id,
+                                                    lista_de_fotos= self.lista_de_fotos,
+                                                    save_encoding = True if self.codificarFace else False
+                                                    )
         if self.carregarCodificacao:
             self.sistema_principal._reload_encoded_faces()
-
-        print(f'Fotos salvas com sucesso no diretório: "{self.path}/{self.id}"')
 
