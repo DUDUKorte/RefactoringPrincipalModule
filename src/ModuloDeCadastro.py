@@ -1,7 +1,8 @@
-import time, threading, cv2, os, pickle
+import time, threading, cv2, os
 
 class ModuloDeCadastro:
     def __init__(self, id=None, codificarFace=True, carregarCodificacao=True, sistema_principal=None):
+        self.sistema_principal = sistema_principal
         self.id = id
         self.camera = sistema_principal.camera
         self.objeto_reconhecimento_facial = sistema_principal.objeto_reconhecimento_facial
@@ -43,9 +44,12 @@ class ModuloDeCadastro:
         self._salvar_fotos()
 
     def remover_usuario(self):
-        for file in os.listdir(f'{self.path}/{self.id}'):
-            os.remove(f'{self.path}/{self.id}/{file}')
-        os.removedirs(f'{self.path}/{self.id}')
+        if os.path.exists(f'{self.path}/{self.id}'):
+            for file in os.listdir(f'{self.path}/{self.id}'):
+                os.remove(f'{self.path}/{self.id}/{file}')
+            os.removedirs(f'{self.path}/{self.id}')
+        else:
+            print('Usuário não encontrado!')
 
     def _start_camera(self):
         # inicialização da câmera usando threading, se necessário
@@ -67,6 +71,11 @@ class ModuloDeCadastro:
         if not os.path.exists(f'{self.path}/{self.id}'):
             # Verifique se o local de destino existe; se não cria
             os.makedirs(f'{self.path}/{self.id}')
+        else:
+            if input('ID já cadastrado, deseja sobrescrever arquivos?').lower()[0] == 's':
+                pass
+            else:
+                return 0
 
         # Salve as fotos no diretório
         for i, foto in enumerate(self.lista_de_fotos):
@@ -75,6 +84,8 @@ class ModuloDeCadastro:
             #Salva arquivo .enc
         if self.codificarFace:
             self.bancoEncodings._encode_all_faces_list(force=False)
-                
+        if self.carregarCodificacao:
+            self.sistema_principal._reload_encoded_faces()
+
         print(f'Fotos salvas com sucesso no diretório: "{self.path}/{self.id}"')
 

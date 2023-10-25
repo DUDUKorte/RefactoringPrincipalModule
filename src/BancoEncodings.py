@@ -1,40 +1,60 @@
-import pickle
-import os
-import face_recognition
+import pickle, os, face_recognition
 from DebugTools_ import *
 
-class BancoEncodings:
+class BancoEncodings: 
     def __init__(self, path):
-        self.path = path
+        """Classe BancoEncodings
+        Tem métodos para manipular os encodings do banco de dados local
+        como salvar, carregar, recarregar etc...
+        """
+
+        # Caminho onde está a pasta raíz dos encodings/fotos de todos os usuários
+        self.path = path #Exemplo: /pasta1/pasta2/Encodings/
+                         #                                 /Usuário1/fotos ou encodings
+                         #                                 /Usuário2/fotos ou encodings
+                         #                                 /Usuário3/fotos ou encodings
+                         #
+                         # path = pasta1/pasta2/Encodings/
+        
         # Converter o caminho ('C:/pasta/pasta/pasta') para o caminho do sistema normal
         #drive_letter = self.path[:2]
         #self.path = os.path.join(*self.path[2:].split('/'))
-        self.slash = '/'
+        self.slash = '/' #BUG: Para diretórios do windows funicona tanto / quanto \ mas no linux só funciona /, pra trocar mais fácil eu fiz essa variável
         #self.path = drive_letter+self.slash+self.path
         #self.path = 'known_50_faces_test'
-        self.path = path
+        self.path = path # Aqui atualiza o path se fizer a conversão do caminho
 
-        self.model='large' 
-        self.num_jitters=1
+        self.model='large' # Modelo do face_recognition para usar, 'small' utiliza apenas 5 pontos, 'large' utiliza 128
+        self.num_jitters=1 # Quantidade de vezes que a foto é distorcida para fazer o encoding da foto nos métodos
 
     # carrega um arquivo .enc específico
     def _load_enc_file(self, specific_path):
-            with open(f'{specific_path}', 'rb') as f:
-                ids_list, endoded_faces = pickle.load(f)
-                plog(f'INFO: .enc file loaded: {specific_path}.enc')
+        """
+        specific_path: caminho específico do arquivo .enc para carregar;
+        """
+        with open(f'{specific_path}', 'rb') as f: # Modo de leitura binária no arquivo específico
+            ids_list, endoded_faces = pickle.load(f) # Carrega o id e o encoding
+            plog(f'INFO: .enc file loaded: {specific_path}.enc') # Informação do terminal
 
-            return [ids_list, endoded_faces]
+        # NOTA: Está sendo utilizado para carregar o arquivo dataser_faces.enc que tem todas as 13K faces codificadas
+        return [ids_list, endoded_faces] # Retorna uma lista com as duas listas para utilizar
 
     # salva um arquivo .enc específico em um diretório
     def _save_enc_file(self, encoded_faces, specific_path = None):
-        if not specific_path:
+        """
+        encoded_faces: lista com duas listas com todas as codificações e IDs prontas;
+        specific_path=None: Especifica um caminho e nome de arquivo para falvar as 
+        faces codificadas, valor padrão (None) vai salvar na pasta raíz do sistema
+        com o nome 'dataset_faces.enc';
+        """
+        if not specific_path: # Se não tiver um caminho especificado para salvar utiliza nome de arquivo padrão e salva na raíz do sistema
             with open('dataset_faces.enc', 'wb') as f:
                 pickle.dump(encoded_faces, f)
-        else:
+        else: # Salva o arquivo no caminho e nome especificado
             with open(f'{specific_path}.enc', 'wb') as f:
                 pickle.dump(encoded_faces, f)
 
-# FUNÇÕES COM ENCODE E LOAD DE TODAS AS FACES POR ARQUIVO COM LISTAS ===========================================================================
+# FUNÇÕES COM ENCODE E LOAD DE TODAS AS FACES ARQUIVO POR ARQUIVO COM LISTAS ===========================================================================
 
     # Apenas faz o encoding de todas as faces e salva o arquivo .enc para cada foto
     def _encode_all_faces_list(self, force = False):

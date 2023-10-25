@@ -59,7 +59,7 @@ class SistemaPrincipal:
         # exemplo de usar as threads
         # thread = Thread(target = self.processoReconhecimento.process())
         self.processoReconhecimento.process()
-    
+    #PRONTO
     def stop_face_recognition(self):
         self.processoReconhecimento.running = False
 
@@ -71,6 +71,8 @@ class SistemaPrincipal:
 
     #PRONTO
     def start_user_register(self, id = '1', codificarFace=True, carregarCodificacao=True):
+        if not id:
+            return 0
         #AQUI tu faz o módulo de registro
         #obj_modulo_de_cadastro = ModuloDeCadastro.ModuoDeCadastro()
         #obj_modulo_de_cadastro.inicar_cadatro()
@@ -98,6 +100,10 @@ class SistemaPrincipal:
         with open("cam_settings.json", 'r') as f:
             self.cam_settings = json.load(f)
         print(f'INFO: CAMERA SETTINGS CARREGADO')
+    
+    #PRONTO
+    def _reload_encoded_faces(self):
+        self.encoded_faces = self.bancoEncodings._load_all_faces_list()
 
 
 if __name__ == '__main__':
