@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 
 class liveness_detector:
     def __init__(self, 
-                model_dir = "./resources/anti_spoof_models", 
+                model_dir = "src/liveness_detection_src/resources/anti_spoof_models", 
                 device_id = 0):
         
         self.model_dir = model_dir
@@ -30,9 +30,9 @@ class liveness_detector:
         model_test = AntiSpoofPredict(device_id)
         image_cropper = CropImage()
 
-        frame = cv2.resize(frame, (int(frame.shape[0] * 3/4), frame.shape[0]))
-        if not self._check_image(frame):
-            return
+        # frame = cv2.resize(frame, (int(frame.shape[0] * 3/4), frame.shape[0]))
+        # if not self._check_image(frame):
+        #     return
 
         image_bbox = self._get_bbox(face_location) #Aqui ele pega a face da pessoa usando algum algoritmop
         prediction = np.zeros((1, 3))
