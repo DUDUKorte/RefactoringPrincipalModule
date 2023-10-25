@@ -1,3 +1,6 @@
 known_50_faces_test
-classes_refact/__pycache__
+*__pycache__
 ignore_files
+liveless_detection
+*.xlsx
+*.log
