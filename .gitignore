@@ -4,3 +4,5 @@ ignore_files
 liveless_detection
 *.xlsx
 *.log
+venv
+_requirements.txt

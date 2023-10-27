@@ -1,7 +1,6 @@
 import customtkinter
 from PIL import Image
 import os
-import TestModuleUserInterface as test
 import threading, pickle
 
 customtkinter.set_appearance_mode("dark")
@@ -76,14 +75,6 @@ class Interface(customtkinter.CTk):
         self.removeFrame.grid(row=0, column=0, sticky="nsew", padx=100)
         print('started remove user frame')
 
-    # #Evento para einiciar o módulo de testes
-    # def startTestModule(self):
-    #     apps = test.App()
-    #     apps.mainloop()
-    def startTestModule(self):
-        testModuleWindow = test.App()
-        testModuleWindow.mainloop()
-
     #Evento do botão de voltar funcional para qualquer tela que volta à tela principal
     def back_event(self, currentFrame = None):
         currentFrame.grid_forget()  # remove main frame
@@ -155,10 +146,6 @@ class Interface(customtkinter.CTk):
         #botão remove user
         self.other_button = customtkinter.CTkButton(self.main_frame, text="Remove User", command=lambda: self.startRemoveUserFrame(), width=200)
         self.other_button.grid(row=3, column=0, padx=40, pady=(15, 15))
-
-        #botão test module
-        self.other_button = customtkinter.CTkButton(self.main_frame, text="Test Module", command=self.startTestModule, width=200)
-        self.other_button.grid(row=4, column=0, padx=40, pady=(15, 15))
 
         #botão EXIT
         self.exit_button = customtkinter.CTkButton(self.main_frame, text="Exit", command= lambda: self.exit_event(), width=200)

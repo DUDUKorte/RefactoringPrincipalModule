@@ -30,7 +30,7 @@ class BancoEncodings:
         """
         with open(f'{specific_path}', 'rb') as f: # Modo de leitura binária no arquivo específico
             ids_list, endoded_faces = pickle.load(f) # Carrega o id e o encoding
-            plog(f'INFO: .enc file loaded: {specific_path}.enc') # Informação do terminal
+            #plog(f'INFO: .enc file loaded: {specific_path}.enc') # Informação do terminal
 
         # NOTA: Está sendo utilizado para carregar o arquivo dataser_faces.enc que tem todas as 13K faces codificadas
         return [ids_list, endoded_faces] # Retorna uma lista com as duas listas para utilizar
@@ -119,9 +119,9 @@ class BancoEncodings:
                     encoded_faces_list.append(tmp_encode)
                     add_to_logFile(log_file, f'SUCESSO AO CARREGAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
                 except:
-                    plog(f'ERRO AO CARREGAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                    #plog(f'ERRO AO CARREGAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
                     add_to_logFile(log_file, f'ERRO AO CARREGAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
-        plog(encoded_faces_list)
+        #plog(encoded_faces_list)
         return [ids_list, encoded_faces_list]
 
 # FUNÇÕES COM APENAS UM ARQUIVO E COM LISTA ===========================================================================
@@ -184,7 +184,7 @@ class BancoEncodings:
             nome_do_arquivo = os.path.join(f'{self.path}{self.slash}{id}', f'foto_{i}.jpg')
             cv2.imwrite(nome_do_arquivo, foto)
         
-        print(f'Fotos salvas com sucesso no diretório: "{self.path}/{self.id}"')
+        print(f'Fotos salvas com sucesso no diretório: "{self.path}{self.slash}{self.id}"')
         
         if save_encoding:
             self._encode_all_faces_list(force=False)

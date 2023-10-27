@@ -71,7 +71,7 @@ class ModuloDeTestesFonte:
                 'Rostos Incorretos',
                 'Rostos Analisados',
                 'Taxa de Acerto',
-                'Tempo Médio'                                
+                'Tempo Médio'
                 ]
 
         try:

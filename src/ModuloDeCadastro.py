@@ -44,12 +44,7 @@ class ModuloDeCadastro:
         self._salvar_fotos()
 
     def remover_usuario(self):
-        if os.path.exists(f'{self.path}/{self.id}'):
-            for file in os.listdir(f'{self.path}/{self.id}'):
-                os.remove(f'{self.path}/{self.id}/{file}')
-            os.removedirs(f'{self.path}/{self.id}')
-        else:
-            print('Usuário não encontrado!')
+        self.bancoEncodings.remove_id(self.id)
 
     def _start_camera(self):
         # inicialização da câmera usando threading, se necessário

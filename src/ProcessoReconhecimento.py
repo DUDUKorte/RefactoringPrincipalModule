@@ -34,10 +34,12 @@ class ProcessoReconhecimento:
             if success:
                 # Converte o frame do formato de cor bgr, que é utilizado pelo opencv, para o formato rgb, que é utilizado pelo face_recognition
                 frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
+                frame = self.camera.escalonar_frame(frame, 50)
 
                 # pega o face_locations(mostrar tempo?)
                 encoding_start = time.time()
                 face_location = self.objeto_reconhecimento_facial.get_main_face_location(frame)
+                plog(f'LOCATION TIME : {time.time() - encoding_start}')
                 if face_location:
                     #cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
                     rectanglelog(frame=bgr_frame, locations=face_location, color=(0,0,255), thickness=1)
@@ -50,7 +52,10 @@ class ProcessoReconhecimento:
                         plog("Face Real")
                         textlog(frame=bgr_frame, text="Face Real", locations=face_location, bottom=True)
 
+                        time_encoding_start = time.time()
                         face_encoding = self.objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
+                        plog(f'ENCODING TIME : {time.time() - time_encoding_start}')
+
                         found_id = self.objeto_reconhecimento_facial.decode_face_lists(self.encoded_faces, face_encoding, False)
                         encoding_end = time.time()
                         
@@ -73,3 +78,7 @@ class ProcessoReconhecimento:
                     else:
                         plog("Face FAKE")
                         textlog(frame=bgr_frame, text="Face Fake", locations=face_location, bottom=True, color=(0, 0, 255))
+                #Exibe o frame na tela
+                bgr_frame = self.camera.escalonar_frame(bgr_frame, 50)
+                cv2.imshow('Face Recognition', bgr_frame)
+                cv2.waitKey(1)

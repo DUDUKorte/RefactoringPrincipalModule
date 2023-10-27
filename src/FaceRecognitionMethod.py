@@ -87,6 +87,7 @@ class FaceRecognitionMethod:
             #True = Rosto real - False = Foto/Imagm
             return self.liveness_detector.detect_liveness(frame, face_location)
         else:
+            plog('liveness disabled')
             return True
 
     def decode_face_lists(self, encoded_faces, face_encoding, distance = False):

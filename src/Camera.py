@@ -1,4 +1,4 @@
-import cv2
+import cv2, time
 
 class Camera:
     def __init__(self, cam_param):
@@ -13,6 +13,7 @@ class Camera:
         camera_object.set(3, cam_param["height"])
         camera_object.set(4, cam_param["width"])
         self.params["camera_object"] = camera_object
+        self.rescale_porcentage = self.params["rescale"]
 
         print("CAMERA INICIALIZADA")
     
@@ -33,14 +34,18 @@ class Camera:
         camera_object = self.params["camera_object"]
         face_encodings = []
         frames_capturados = []
+        tempo_registrado = []
 
         while self.running_camera:
-            success, frame = camera_object.read()
+            success, bgr_frame = camera_object.read()
             #frame "limpo" para salvar na pasta
-            clean_frame = frame
+            clean_frame = bgr_frame
             if success:
+                frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
+                frame = self.camera.escalonar_frame(frame, self.rescale_porcentage) if self.rescale_porcentage < 100 else frame
 
                 if self.running_face_recognition or self.running_face_register:
+                    encoding_start = time.time() #Começa a contar o tempo para colocar o tempo médio nos testes
                     face_location = objeto_reconhecimento_facial.get_main_face_location(frame)
                     if face_location:
                         cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
@@ -58,14 +63,17 @@ class Camera:
                                 total_face_encoding += 1
                                 face_correct += 1 if found_id == nome_esperado else 0
                                 cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 255, 0), 4)
+                            encoding_end = time.time()
+                            #Não colocar a contagem de tempo fora do if face_location, se não ele vai variar MUITO o tempo quando não detectar faces
+                            tempo_registrado.append(encoding_end-encoding_start)
                     total_frames += 1
                 # Atualiza quadro da tela
                 # Diminui o tamanho do frame
-                frame = self.escalonar_frame(frame, 50)
-                cv2.imshow('TESTE RODANDO', frame)
+                bgr_frame = self.escalonar_frame(bgr_frame, 50)
+                cv2.imshow('TESTE RODANDO', bgr_frame)
                 cv2.waitKey(1)
-
-        return [face_error, total_face_encoding, face_correct, total_frames, face_encodings, frames_capturados]
+        tempo_medio = (sum(tempo_registrado)/len(tempo_registrado)) if tempo_registrado else None
+        return [face_error, total_face_encoding, face_correct, total_frames, face_encodings, frames_capturados, tempo_medio]
 
 
     def stop_camera(self):
