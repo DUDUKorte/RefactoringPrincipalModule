@@ -44,7 +44,9 @@ class ModuloDeTestes:
         obj_ModuloFonte.rostos_analisados = self.total_face_encoding
         obj_ModuloFonte.rostos_incorretos = self.face_error
         obj_ModuloFonte.rostos_corretos = self.total_face_encoding - self.face_error
-        
+        obj_ModuloFonte.tempo_medio = self.tempo_medio
+        obj_ModuloFonte.taxa_de_acerto = f'{(((self.total_face_encoding - self.face_error) / self.total_face_encoding) * 100):.2f}%'
+
         # Gerar Planilha e Terminar Processo de testes
         obj_ModuloFonte.gerarPlanilha(nome_da_planlha)
 
@@ -61,3 +63,4 @@ class ModuloDeTestes:
         self.total_face_encoding = resultados[1]
         self.face_correct = resultados[2]
         self.total_frames = resultados[3]
+        self.tempo_medio = resultados[6]

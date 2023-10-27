@@ -71,7 +71,7 @@ class ModuloDeTestesFonte:
                 'Rostos Incorretos',
                 'Rostos Analisados',
                 'Taxa de Acerto',
-                'Tempo Médio'                                
+                'Tempo Médio'
                 ]
 
         try:
@@ -84,9 +84,3 @@ class ModuloDeTestesFonte:
         df.to_excel(nome_planilha, index=False)
         print(df)
         print(f'Planilha salva com sucesso como: "{nome_planilha}"')
-
-if __name__ == '__main__':
-    test = ModuloDeTestesFonte()
-    test.getParametrosDeTeste()
-    if test.paremtros_obtidos:
-        test.gerarPlanilha('Teste_refactored')

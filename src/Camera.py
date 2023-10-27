@@ -1,10 +1,9 @@
-import cv2, FaceRecognitionMethod
+import cv2, time
 
 class Camera:
     def __init__(self, cam_param):
         # inicializar câmera
         # pegar valores da câmera para usar (fps, resolução etc)
-        # APENAS EXEMPLOS
         self.running_camera = True
         self.running_face_recognition = False
         self.running_face_register = False
@@ -14,6 +13,7 @@ class Camera:
         camera_object.set(3, cam_param["height"])
         camera_object.set(4, cam_param["width"])
         self.params["camera_object"] = camera_object
+        self.rescale_porcentage = self.params["rescale"]
 
         print("CAMERA INICIALIZADA")
     
@@ -34,14 +34,18 @@ class Camera:
         camera_object = self.params["camera_object"]
         face_encodings = []
         frames_capturados = []
+        tempo_registrado = []
 
         while self.running_camera:
-            success, frame = camera_object.read()
+            success, bgr_frame = camera_object.read()
             #frame "limpo" para salvar na pasta
-            clean_frame = frame
+            clean_frame = bgr_frame
             if success:
+                frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
+                frame = self.camera.escalonar_frame(frame, self.rescale_porcentage) if self.rescale_porcentage < 100 else frame
 
                 if self.running_face_recognition or self.running_face_register:
+                    encoding_start = time.time() #Começa a contar o tempo para colocar o tempo médio nos testes
                     face_location = objeto_reconhecimento_facial.get_main_face_location(frame)
                     if face_location:
                         cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
@@ -52,21 +56,24 @@ class Camera:
                             frames_capturados.append(clean_frame)
 
                         if self.running_face_recognition:
-                            found_id = objeto_reconhecimento_facial._decode_face_lists(encoded_faces, face_encoding, True)
+                            found_id = objeto_reconhecimento_facial.decode_face_lists(encoded_faces, face_encoding, True)
                             #found_id = None
                             if found_id:
                                 face_error += 1 if not found_id == nome_esperado else 0
                                 total_face_encoding += 1
                                 face_correct += 1 if found_id == nome_esperado else 0
                                 cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 255, 0), 4)
+                            encoding_end = time.time()
+                            #Não colocar a contagem de tempo fora do if face_location, se não ele vai variar MUITO o tempo quando não detectar faces
+                            tempo_registrado.append(encoding_end-encoding_start)
                     total_frames += 1
                 # Atualiza quadro da tela
                 # Diminui o tamanho do frame
-                frame = self.escalonar_frame(frame, 50)
-                cv2.imshow('TESTE RODANDO', frame)
+                bgr_frame = self.escalonar_frame(bgr_frame, 50)
+                cv2.imshow('TESTE RODANDO', bgr_frame)
                 cv2.waitKey(1)
-
-        return [face_error, total_face_encoding, face_correct, total_frames, face_encodings, frames_capturados]
+        tempo_medio = (sum(tempo_registrado)/len(tempo_registrado)) if tempo_registrado else None
+        return [face_error, total_face_encoding, face_correct, total_frames, face_encodings, frames_capturados, tempo_medio]
 
 
     def stop_camera(self):
@@ -83,31 +90,3 @@ class Camera:
 
     def stop_face_register(self):
         self.running_face_register = False
-
-def debug():
-    detect_param = {
-    "detect_method" : "face_recognition",
-    "face_encoding_resample" : 0,
-    "model" : "hog",
-    "locations_upsample" : 0,
-    "tolerance" : 0.45,
-    "min_detection_confidence" : 0.4,
-    "distance_percentage" : 0.13,
-    "liveness_detection" : False,
-    "DEBUG" : True
-    }
-    cam_param = {
-    "camera_index" : 0,
-    "fps" : 30,
-    "width" : 480,
-    "height" : 640,
-    "camera_object" : None
-}
-    objeto_reconhecimento_facial = FaceRecognitionMethod.FaceRecognitionMethod(detect_param)
-    print('foi')
-    input()
-    teste = Camera(cam_param)
-    teste.inicializar_camera(objeto_reconhecimento_facial)
-
-if __name__ == '__main__':
-    debug()
