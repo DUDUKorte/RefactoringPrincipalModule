@@ -6,3 +6,4 @@ liveless_detection
 *.log
 venv
 _requirements.txt
+src/__pycache__
