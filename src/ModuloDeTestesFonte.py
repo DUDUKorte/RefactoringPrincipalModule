@@ -47,7 +47,17 @@ class ModuloDeTestesFonte:
             parametro = input('\n--> ') # Recebe o parâmertro digitado
         return parametro # Retorna o parâmetro que for digitado e estiver nas opções do set
 
+    def setParametro(self, algoritmo, qualidade, distancia, iluminacao):
+        self.algoritmo_de_localizacao = algoritmo
+        self.qualidade_de_imagem = qualidade
+        self.distancia = distancia
+        self.iluminacao = iluminacao
+        self.paremtros_obtidos = True
+
     def gerarPlanilha(self, nome_planilha: str):
+        if not self.paremtros_obtidos:
+            return False
+        
         nome_planilha += '.xlsx'
         data = [[
             self.algoritmo_de_localizacao,

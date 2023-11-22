@@ -169,22 +169,29 @@ class BancoEncodings:
 # FUNÇÕES "PÚBLICAS" ===========================================================================
 
     def registrar_novo_usuario(self, id, lista_de_fotos, save_encoding):
+        overwrite = False
+
         # Verifique se a codificação da face está ativada
         if not os.path.exists(f'{self.path}{self.slash}{id}'):
             # Verifique se o local de destino existe; se não cria
             os.makedirs(f'{self.path}{self.slash}{id}')
         else:
             if input('ID já cadastrado, deseja sobrescrever arquivos?').lower()[0] == 's':
-                pass
+                overwrite = True
             else:
                 return 0
 
         # Salve as fotos no diretório
         for i, foto in enumerate(lista_de_fotos):
             nome_do_arquivo = os.path.join(f'{self.path}{self.slash}{id}', f'foto_{i}.jpg')
+            if overwrite:
+                try:
+                    os.remove(f'{nome_do_arquivo}.enc')
+                except:
+                    print(f'ERRO AO APAGAR ARQUIVO {self.path}{self.slash}{id}{self.slash}{nome_do_arquivo}.enc')
             cv2.imwrite(nome_do_arquivo, foto)
         
-        print(f'Fotos salvas com sucesso no diretório: "{self.path}{self.slash}{self.id}"')
+        print(f'Fotos salvas com sucesso no diretório: "{self.path}{self.slash}{id}"')
         
         if save_encoding:
             self._encode_all_faces_list(force=False)

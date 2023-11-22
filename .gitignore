@@ -7,3 +7,5 @@ liveless_detection
 venv
 _requirements.txt
 src/__pycache__
+*.pyc
+testes

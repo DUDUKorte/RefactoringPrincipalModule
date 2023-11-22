@@ -14,6 +14,14 @@ class FaceRecognitionMethod:
         self.distance = detect_settings['distance_percentage']
         self.liveness_detection = detect_settings['liveness_detection']
 
+    def update_detect_settings(self, detect_settings):
+        self.model = detect_settings['model']
+        self.locations_upsample = detect_settings['locations_upsample']
+        self.encoding_resample = detect_settings['face_encoding_resample']
+        self.tolerance = detect_settings['tolerance']
+        self.distance = detect_settings['distance_percentage']
+        self.liveness_detection = detect_settings['liveness_detection']
+
     def get_main_face_location(self, frame):
         face_locations = self._get_face_locations(frame)
         maior_area = 0

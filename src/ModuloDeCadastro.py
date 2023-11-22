@@ -1,4 +1,4 @@
-import time, threading, os
+import time, threading
 
 class ModuloDeCadastro:
     def __init__(self, id=None, codificarFace=True, carregarCodificacao=True, sistema_principal=None):
@@ -31,15 +31,12 @@ class ModuloDeCadastro:
         thread_contagem_1.join()
         #Iniciar o registro da face
         self.camera.start_face_register()
-        #Espera N segundos
-        thread_contagem_2.start()
-        thread_contagem_2.join()
-        #Terminar de registrar  a face
-        self.camera.stop_face_register()
-        self.camera.stop_camera()
+        #Espera tirar a quantidade de fotos necessária
         # Esperar a thread da camera acabar
         thread_start_camera.join()
 
+        #Espera capturar todos os frames necessários
+    
         #SALVAR ENCODINGS E FOTOS CAPTURADOS
         self._salvar_fotos()
 
@@ -49,6 +46,7 @@ class ModuloDeCadastro:
     def _start_camera(self):
         # inicialização da câmera usando threading, se necessário
         # 0 é identificado como camera padrão(mudar caso nescessario{Eduardo})
+        self.objeto_reconhecimento_facial.tolerance = 0 #Tira a distância mínima da câmera
         resultados = self.camera.inicializar_camera(self.objeto_reconhecimento_facial, self.encoded_faces)
         self.face_encodings = resultados[4]
         self.lista_de_fotos = resultados[5]

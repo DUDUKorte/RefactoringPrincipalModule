@@ -13,7 +13,6 @@ class Interface(customtkinter.CTk):
         super().__init__(*args, **kwargs)
         # PREPARAR TODAS AS THREADS DO SISTEMA PRINCIPAL
         self.mainSys = mainSys
-        self.iniciar_sistema_principal = threading.Thread(target=lambda: self.mainSys.start_face_recognition())
 
         self.title("Face Recognition System")
         self.geometry(f"{self.width}x{self.height}")
@@ -59,6 +58,7 @@ class Interface(customtkinter.CTk):
 
     #Evento para iniciar o sistema principal
     def startMainSys(self):
+        self.iniciar_sistema_principal = threading.Thread(target=lambda: self.mainSys.start_face_recognition())
         self.iniciar_sistema_principal.start() #Inicia de fato o módulo principal
         self.main_frame.grid_forget() # remove main frame
         self.mainSysFrame.grid(row=0, column=0, sticky="nsew", padx=100) # show mainsys frame
@@ -215,7 +215,7 @@ class Interface(customtkinter.CTk):
         self.entradaID_remove.grid(row=1, column=0, padx=30, pady=(30, 15))
 
         #Botão remover
-        self.removeButton = customtkinter.CTkButton(self.removeFrame, text="Remove!", command= lambda: self.startUserRegister(), width=200)
+        self.removeButton = customtkinter.CTkButton(self.removeFrame, text="Remove!", command= lambda: self.startRemoveUser(), width=200)
         self.removeButton.grid(row=4, column = 0, padx = 30, pady=(15, 15))
 
         #Botão BACK
