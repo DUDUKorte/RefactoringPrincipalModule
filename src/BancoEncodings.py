@@ -21,7 +21,7 @@ class BancoEncodings:
         self.slash = '/' #BUG: Para diretórios do windows funicona tanto / quanto \ mas no linux só funciona /, pra trocar mais fácil eu fiz essa variável
 
         self.model='large' # Modelo do face_recognition para usar, 'small' utiliza apenas 5 pontos, 'large' utiliza 128
-        self.num_jitters=1 # Quantidade de vezes que a foto é distorcida para fazer o encoding da foto nos métodos
+        self.num_jitters=10 # Quantidade de vezes que a foto é distorcida para fazer o encoding da foto nos métodos
 
     # carrega um arquivo .enc específico
     def _load_enc_file(self, specific_path):

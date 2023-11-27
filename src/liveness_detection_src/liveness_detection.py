@@ -34,7 +34,7 @@ class liveness_detector:
         # if not self._check_image(frame):
         #     return False
 
-        image_bbox = self._get_bbox(face_location) #Aqui ele pega a face da pessoa usando algum algoritmop
+        image_bbox = self._get_bbox(face_location) #Aqui ele pega a face da pessoa usando algoritmo do sistema de reconhecimento facial
         prediction = np.zeros((1, 3))
         
         #model_name = "4_0_0_80x80_MiniFASNetV1SE.pth"

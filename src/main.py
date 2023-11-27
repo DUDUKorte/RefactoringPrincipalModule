@@ -6,9 +6,10 @@ if __name__ == "__main__":
     mainSys = MainSystem()
     
     # #NAO FUNCIONA FORA DA PASTA SRC
-    # def iniciar():
-    #     mainSys.start_face_recognition()
+    #def iniciar():
+    #    mainSys.start_test_module()
 
+    #iniciar()
     interface = Interface(mainSys)
     interface.mainloop()
     #https://www.youtube.com/watch?v=5KEObONUkik

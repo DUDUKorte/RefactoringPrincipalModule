@@ -8,7 +8,9 @@ class ModuloDeTestesFonte:
             rostos_incorretos=0,
             taxa_de_acerto=0,
             tempo_medio=0,
-            rostos_analisados = 0
+            rostos_analisados = 0,
+            taxa_de_deteccao = 0,
+            taxa_acerto_deteccao = 0
     ):
         self.rostos_utilizados = rostos_utilizados
         self.rostos_analisados = rostos_analisados
@@ -16,6 +18,8 @@ class ModuloDeTestesFonte:
         self.rostos_incorretos = rostos_incorretos
         self.taxa_de_acerto = taxa_de_acerto
         self.tempo_medio = tempo_medio
+        self.taxa_de_deteccao = taxa_de_deteccao
+        self.taxa_acerto_deteccao = taxa_acerto_deteccao
         self.paremtros_obtidos = False
 
     def getParametrosDeTeste(self):
@@ -69,7 +73,9 @@ class ModuloDeTestesFonte:
             self.rostos_incorretos,
             self.rostos_analisados,
             self.taxa_de_acerto,
-            self.tempo_medio
+            self.tempo_medio,
+            self.taxa_de_deteccao,
+            self.taxa_acerto_deteccao
         ]]
 
         columns=['Algoritmo', 
@@ -81,7 +87,9 @@ class ModuloDeTestesFonte:
                 'Rostos Incorretos',
                 'Rostos Analisados',
                 'Taxa de Acerto',
-                'Tempo Médio'
+                'Tempo Médio',
+                "Taxa de detecção",
+                "Taxa de acerto/detecção"
                 ]
 
         try:

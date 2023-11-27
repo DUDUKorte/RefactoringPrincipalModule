@@ -16,10 +16,10 @@ class Camera:
         self.rescale_porcentage = self.params["rescale"]
 
         self.escala = {
-            '1080p' : 1,
-            '720p' : 0.67,
-            '480p' : 0.45,
-            '360p' : 0.34
+            '1080p' : 100,
+            '720p' : 67,
+            '480p' : 45,
+            '360p' : 34
         }
 
         print("CAMERA INICIALIZADA")
@@ -52,19 +52,20 @@ class Camera:
                 frame = self.escalonar_frame(frame, self.rescale_porcentage) if self.rescale_porcentage < 100 else frame
 
                 if self.running_face_recognition or self.running_face_register:
-                    if len(frames_capturados) >= 30 and self.running_face_register:
-                        print(len(frames_capturados))
-                        self.stop_face_register()
-                        self.stop_camera()
 
                     encoding_start = time.time() #Começa a contar o tempo para colocar o tempo médio nos testes
                     face_location = objeto_reconhecimento_facial.get_main_face_location(frame)
                     if face_location:
+                        if len(frames_capturados) >= 30 and self.running_face_register:
+                            print(len(frames_capturados))
+                            self.stop_face_register()
+                            self.stop_camera()
+
                         cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
                         
-                        face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
+                        if self.running_face_recognition:
+                            face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
                         if self.running_face_register:
-                            face_encodings.append(face_encoding)
                             frames_capturados.append(clean_frame)
 
                         if self.running_face_recognition:

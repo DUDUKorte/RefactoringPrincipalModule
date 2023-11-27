@@ -98,6 +98,9 @@ class FaceRecognitionMethod:
             plog('liveness disabled')
             return True
 
+    def load_file(self, file):
+        return face_recognition.load_image_file(file)
+
     def decode_face_lists(self, encoded_faces, face_encoding, distance = False):
         try:
             face_encoding = face_encoding[0]

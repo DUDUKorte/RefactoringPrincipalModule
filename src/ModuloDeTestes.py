@@ -19,6 +19,9 @@ class ModuloDeTestes:
         self.face_correct = 0
         self.total_frames = 0
         self.tempo_medio = 0
+        self.fotos_totais = 0
+
+        self.errors = []
 
     def inicar_teste(self, nome_da_planilha: str = 'Default'):
         
@@ -69,7 +72,7 @@ class ModuloDeTestes:
         opcoes_de_algoritmo = ['hog', 'cnn']
         opcoes_de_iluminacao = ["alta", "media", "baixa", "artificial"]
         opcoes_de_qualidade = ['360p', '480p', '720p', '1080p']
-        opcoes_de_distancia = ['30cm', '1m', '2m']
+        opcoes_de_distancia = ['1m', '30cm']
         
         testes = 0
         self.tempo_registrado = []
@@ -88,6 +91,7 @@ class ModuloDeTestes:
                             #plog(f'Teste {algoritmo} | {qualidade} | {distancia} | {iluminacao}\nEM {images_path}/{id}/{distancia}/ilum_{iluminacao}/foto.jpg')
                             folder = f'{images_path}/{id}/{distancia}/ilum_{iluminacao}/'
                             self._aplicar_teste(algoritmo, qualidade, distancia, iluminacao, folder, id)
+                            print(id)
                             testes += 1
 
                         #TODO SALVAR NA PLANILHA AQUI
@@ -101,10 +105,10 @@ class ModuloDeTestes:
     def _aplicar_teste(self, algoritmo, qualidade, distancia, iluminacao, folder, id):
         detect_settings = {
             "detect_method" : "face_recognition",
-            "face_encoding_resample" : 0,
+            "face_encoding_resample" : 10,
             "model" : algoritmo,
             "locations_upsample" : 0,
-            "tolerance" : 0.45,
+            "tolerance" : 0.40,
             "min_detection_confidence" : 0.4,
             "distance_percentage" : 0,
             "liveness_detection" : False,
@@ -113,22 +117,35 @@ class ModuloDeTestes:
 
         self.objeto_reconhecimento_facial.update_detect_settings(detect_settings)
         for file in os.listdir(folder):
-            frame = cv2.imread(f'{folder}/{file}', 0)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            self.fotos_totais += 1
+            frame_bgr = cv2.imread(f'{folder}/{file}', 1)
+            frame = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+            #frame = self.objeto_reconhecimento_facial.load_file(f'{folder}/{file}')
 
-            self.camera.escalonar_frame(frame, self.camera.escala[qualidade])
+            frame = self.camera.escalonar_frame(frame, self.camera.escala[qualidade])
 
             start_recognition = time.time()
             face_location = self.objeto_reconhecimento_facial.get_main_face_location(frame)
             if face_location:
                 if self.objeto_reconhecimento_facial.detect_liveness(frame, face_location):
                     face_encoding = self.objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
+                    self.total_face_encoding += 1
+                    self.tempo_registrado.append(time.time() - start_recognition)
                     found_id = self.objeto_reconhecimento_facial.decode_face_lists(self.encoded_faces, face_encoding, False)
+                    #cv2.rectangle(frame, (face_location[2], face_location[3]), (face_location[0], face_location[1]), (255, 255, 255))
+                    #cv2.imshow('tela', frame)
+                    #cv2.waitKey(0)
+
+                    #found_id = input('correto?')
                     if found_id:
-                        self.tempo_registrado.append(time.time() - start_recognition)
                         if found_id == id: self.face_correct += 1
-                        else: self.face_error += 1
-                        self.total_face_encoding += 1
+                        else: 
+                            self.face_error += 1
+                            self.errors.append(f'ERRO ARQUIVO {file} | FACE RECONHECIDA {found_id} | FACE REAL {id}')
+                            print(f'ERRO ARQUIVO {file} | FACE RECONHECIDA {found_id} | FACE REAL {id}')
+                            #rectanglelog(frame=frame, locations=face_location, color=(0,255,0), thickness=4)
+                            #cv2.imshow('ERROR', frame)
+                            #cv2.waitKey(0)
 
     def _aplicar_resultados(self):
         # Aplicar dos testes
@@ -136,16 +153,20 @@ class ModuloDeTestes:
         self.obj_ModuloFonte.rostos_analisados = self.total_face_encoding
         self.obj_ModuloFonte.rostos_incorretos = self.face_error
         self.obj_ModuloFonte.rostos_corretos = self.face_correct
-        self.obj_ModuloFonte.tempo_medio = f'{self.tempo_medio:.2f}s'
-        self.obj_ModuloFonte.taxa_de_acerto = f'{((self.face_correct / self.total_face_encoding) * 100):.2f}%' if (self.total_face_encoding > 0) else f'N/A'
+        self.obj_ModuloFonte.tempo_medio = float(f'{self.tempo_medio:.2f}')
+        self.obj_ModuloFonte.taxa_de_acerto = float(f'{((self.face_correct / self.total_face_encoding) * 100):.2f}') if (self.total_face_encoding > 0) else 0
+        self.obj_ModuloFonte.taxa_de_deteccao = float(f'{(self.total_face_encoding / self.fotos_totais) * 100:.2f}')
+        self.obj_ModuloFonte.taxa_acerto_deteccao = float(f'{(self.face_correct / self.fotos_totais) * 100:.2f}')
 
     def _reset_resultados(self):
             # Reseta os valores dos testes
             self.total_face_encoding = 0
+            self.fotos_totais = 0
             self.face_error = 0
             self.face_correct = 0
             self.tempo_medio = 0
             self.taxa_de_acerto = 0
+            self.tempo_registrado = []
 
     def _contagem_regressiva(self, segundos: int = 10):
         for i in range(segundos):
