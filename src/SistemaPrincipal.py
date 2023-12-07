@@ -61,7 +61,7 @@ class SistemaPrincipal:
         else:
             time_now = time.time()
             if time_now - self.cooldown_alunos[id] >= 30:
-                self.cooldown_alunos.pop(id)
+                self.cooldown_alunos[id] = time_now
                 self.notificacaoReconhecimento(id)
 
     #PRONTO

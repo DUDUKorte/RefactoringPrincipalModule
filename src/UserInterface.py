@@ -43,13 +43,8 @@ class Interface(customtkinter.CTk):
     #FUNÇÕES PARA INCIAR CADA TELA/MÓDULO
     #Evento para prosseguir da tela de login
     def login_event(self):
-        with open('data.psw', 'rb') as f:
-            login = pickle.load(f)
-
-        if self.username_entry.get() in login:
-            if login[self.username_entry.get()] == self.password_entry.get():
-                self.login_frame.grid_forget()  # remove login frame
-                self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100)  # show main frame
+        self.login_frame.grid_forget()  # remove login frame
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100)  # show main frame
 
     #Evento para sair do sistema
     def exit_event(self):
@@ -109,20 +104,20 @@ class Interface(customtkinter.CTk):
         self.login_frame.grid(row=0, column=0, sticky="ns")
         
         #Configuração da label
-        self.login_label = customtkinter.CTkLabel(self.login_frame, text="Face_Recognition\nLogin Page",
+        self.login_label = customtkinter.CTkLabel(self.login_frame, text="Face Recognition System\n",
                                                   font=customtkinter.CTkFont(size=20, weight="bold"))
         self.login_label.grid(row=0, column=0, padx=30, pady=(150, 15))
         
-        #Entrada do username para login
-        self.username_entry = customtkinter.CTkEntry(self.login_frame, width=200, placeholder_text="username")
-        self.username_entry.grid(row=1, column=0, padx=30, pady=(15, 15))
+        # #Entrada do username para login
+        # self.username_entry = customtkinter.CTkEntry(self.login_frame, width=200, placeholder_text="username")
+        # self.username_entry.grid(row=1, column=0, padx=30, pady=(15, 15))
         
-        #Entrada da senha para login
-        self.password_entry = customtkinter.CTkEntry(self.login_frame, width=200, show="*", placeholder_text="password")
-        self.password_entry.grid(row=2, column=0, padx=30, pady=(0, 15))
+        # #Entrada da senha para login
+        # self.password_entry = customtkinter.CTkEntry(self.login_frame, width=200, show="*", placeholder_text="password")
+        # self.password_entry.grid(row=2, column=0, padx=30, pady=(0, 15))
 
         #botão de login
-        self.login_button = customtkinter.CTkButton(self.login_frame, text="Login", command=self.login_event, width=200)
+        self.login_button = customtkinter.CTkButton(self.login_frame, text="Continue", command=self.login_event, width=200)
         self.login_button.grid(row=3, column=0, padx=30, pady=(15, 15))
 
     def create_main_frame(self):
