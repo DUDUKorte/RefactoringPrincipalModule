@@ -4,3 +4,9 @@ ignore_files
 liveless_detection
 *.xlsx
 *.log
+venv
+_requirements.txt
+src/__pycache__
+*.pyc
+testes
+Face-Recognition-Module-1.0.1-demo

@@ -1,7 +1,6 @@
 import customtkinter
 from PIL import Image
 import os
-import TestModuleUserInterface as test
 import threading, pickle
 
 customtkinter.set_appearance_mode("dark")
@@ -14,7 +13,6 @@ class Interface(customtkinter.CTk):
         super().__init__(*args, **kwargs)
         # PREPARAR TODAS AS THREADS DO SISTEMA PRINCIPAL
         self.mainSys = mainSys
-        self.iniciar_sistema_principal = threading.Thread(target=lambda: self.mainSys.start_face_recognition())
 
         self.title("Face Recognition System")
         self.geometry(f"{self.width}x{self.height}")
@@ -45,13 +43,8 @@ class Interface(customtkinter.CTk):
     #FUNÇÕES PARA INCIAR CADA TELA/MÓDULO
     #Evento para prosseguir da tela de login
     def login_event(self):
-        with open('data.psw', 'rb') as f:
-            login = pickle.load(f)
-
-        if self.username_entry.get() in login:
-            if login[self.username_entry.get()] == self.password_entry.get():
-                self.login_frame.grid_forget()  # remove login frame
-                self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100)  # show main frame
+        self.login_frame.grid_forget()  # remove login frame
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100)  # show main frame
 
     #Evento para sair do sistema
     def exit_event(self):
@@ -60,6 +53,7 @@ class Interface(customtkinter.CTk):
 
     #Evento para iniciar o sistema principal
     def startMainSys(self):
+        self.iniciar_sistema_principal = threading.Thread(target=lambda: self.mainSys.start_face_recognition())
         self.iniciar_sistema_principal.start() #Inicia de fato o módulo principal
         self.main_frame.grid_forget() # remove main frame
         self.mainSysFrame.grid(row=0, column=0, sticky="nsew", padx=100) # show mainsys frame
@@ -75,14 +69,6 @@ class Interface(customtkinter.CTk):
         self.main_frame.grid_forget() #Remove main frame
         self.removeFrame.grid(row=0, column=0, sticky="nsew", padx=100)
         print('started remove user frame')
-
-    # #Evento para einiciar o módulo de testes
-    # def startTestModule(self):
-    #     apps = test.App()
-    #     apps.mainloop()
-    def startTestModule(self):
-        testModuleWindow = test.App()
-        testModuleWindow.mainloop()
 
     #Evento do botão de voltar funcional para qualquer tela que volta à tela principal
     def back_event(self, currentFrame = None):
@@ -118,20 +104,20 @@ class Interface(customtkinter.CTk):
         self.login_frame.grid(row=0, column=0, sticky="ns")
         
         #Configuração da label
-        self.login_label = customtkinter.CTkLabel(self.login_frame, text="Face_Recognition\nLogin Page",
+        self.login_label = customtkinter.CTkLabel(self.login_frame, text="Face Recognition System\n",
                                                   font=customtkinter.CTkFont(size=20, weight="bold"))
         self.login_label.grid(row=0, column=0, padx=30, pady=(150, 15))
         
-        #Entrada do username para login
-        self.username_entry = customtkinter.CTkEntry(self.login_frame, width=200, placeholder_text="username")
-        self.username_entry.grid(row=1, column=0, padx=30, pady=(15, 15))
+        # #Entrada do username para login
+        # self.username_entry = customtkinter.CTkEntry(self.login_frame, width=200, placeholder_text="username")
+        # self.username_entry.grid(row=1, column=0, padx=30, pady=(15, 15))
         
-        #Entrada da senha para login
-        self.password_entry = customtkinter.CTkEntry(self.login_frame, width=200, show="*", placeholder_text="password")
-        self.password_entry.grid(row=2, column=0, padx=30, pady=(0, 15))
+        # #Entrada da senha para login
+        # self.password_entry = customtkinter.CTkEntry(self.login_frame, width=200, show="*", placeholder_text="password")
+        # self.password_entry.grid(row=2, column=0, padx=30, pady=(0, 15))
 
         #botão de login
-        self.login_button = customtkinter.CTkButton(self.login_frame, text="Login", command=self.login_event, width=200)
+        self.login_button = customtkinter.CTkButton(self.login_frame, text="Continue", command=self.login_event, width=200)
         self.login_button.grid(row=3, column=0, padx=30, pady=(15, 15))
 
     def create_main_frame(self):
@@ -155,10 +141,6 @@ class Interface(customtkinter.CTk):
         #botão remove user
         self.other_button = customtkinter.CTkButton(self.main_frame, text="Remove User", command=lambda: self.startRemoveUserFrame(), width=200)
         self.other_button.grid(row=3, column=0, padx=40, pady=(15, 15))
-
-        #botão test module
-        self.other_button = customtkinter.CTkButton(self.main_frame, text="Test Module", command=self.startTestModule, width=200)
-        self.other_button.grid(row=4, column=0, padx=40, pady=(15, 15))
 
         #botão EXIT
         self.exit_button = customtkinter.CTkButton(self.main_frame, text="Exit", command= lambda: self.exit_event(), width=200)
@@ -228,7 +210,7 @@ class Interface(customtkinter.CTk):
         self.entradaID_remove.grid(row=1, column=0, padx=30, pady=(30, 15))
 
         #Botão remover
-        self.removeButton = customtkinter.CTkButton(self.removeFrame, text="Remove!", command= lambda: self.startUserRegister(), width=200)
+        self.removeButton = customtkinter.CTkButton(self.removeFrame, text="Remove!", command= lambda: self.startRemoveUser(), width=200)
         self.removeButton.grid(row=4, column = 0, padx = 30, pady=(15, 15))
 
         #Botão BACK

@@ -1,1 +1,1 @@
-from .main import iniciar
+__all__ = ["DebugTools_", "ProcessoReconhecimento","SistemaPrincipal"]
