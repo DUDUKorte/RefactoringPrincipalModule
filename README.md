@@ -53,5 +53,5 @@ print(dlib.DLIB_USE_CUDA)
 ## [Guide Here](https://gist.github.com/nguyenhoan1988/ed92d58054b985a1b45a521fcf8fa781)
 ---
 # **4** Using Face Recognition System
-## - After installing dlib and other libraries from requirements.txt, you just need to run "demoFaceRecognitionSystem.py"
+## - After installing dlib and other libraries from requirements.txt, you just need to run "main.py"
 ---
