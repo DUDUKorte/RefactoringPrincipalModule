@@ -4,7 +4,11 @@ from UserInterface import Interface
 #TODO
 """
 - clean tmp .jpeg
-- remove load encoding on start
+- remove load encoding on start if doesnt exists (if os.path.exist)
+- fix rectangle on camera reescaled
+- remove DESCONHECIDO from data table
+- add alunos data getter in BancoAlunos.py
+- better way to captures photos to register
 """
 if __name__ == "__main__":
     print('start')

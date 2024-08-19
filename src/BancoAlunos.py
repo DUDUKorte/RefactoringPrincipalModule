@@ -9,6 +9,11 @@ class BancoAlunos:
         self.nome_planilha = nome_planilha
 
         # Aqui o banco de dados iria carregar os dados dos alunos
+        #TODO
+        """
+        BAIXAR AQUI OS DADOS DOS ALUNOS
+        MATRICULA : {NOME: "", TURMA: "", ANO: ""}
+        """
         self.dados_alunos = {
             "Esquilo": "Eduardo",
             "Rodrigo": "Rodrigo",
@@ -20,9 +25,10 @@ class BancoAlunos:
         if _id not in self.dados_alunos:
             nome_aluno = 'DESCONHECIDO'
         else:
-            nome_aluno = str(self.dados_alunos[_id]) #Pega nome do aluno nos dados json
+            # Pega nome do aluno nos dados json
+            nome_aluno = str(self.dados_alunos[_id]) 
         
-        date_data = datetime.now() #Pega o horário atual
+        date_data = datetime.now() # Pega o horário atual
         horario_atual = date_data.strftime('%H:%M:%S')
         data_atual = str(date_data.date())
 
@@ -44,7 +50,6 @@ class BancoAlunos:
 
         self._adicionar_dado_planilha(dados, self.nome_planilha)
 
-
     def _adicionar_dado_planilha(self, dados, nome_planilha):
         #Adicionar dados na planilha
         nome_planilha += '.xlsx'
@@ -59,7 +64,7 @@ class BancoAlunos:
         df = pd.concat([df, new_data], ignore_index=True)
 
         df.to_excel(nome_planilha, index=False)
-        print(df)
+        #print(df)
 
 if __name__ == '__main__':
     planilha = 'alunos_registro'

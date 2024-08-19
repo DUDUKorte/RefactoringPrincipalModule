@@ -86,6 +86,8 @@ class BancoEncodings:
                             plog(f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
                             #Adicionar ao arquivo de log
                             add_to_logFile(log_file, f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                            #excluir imagem TODO
+                            #os.remove(f'{self.path}{self.slash}{ids}{self.slash}{file}')
                         else:
                             plog(f'ERRO AO CODIFICAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
                             erros += 1

@@ -20,6 +20,12 @@ class ModuloDeCadastro:
     def iniciar_cadastro(self):
         delay = 10
 
+        #TODO
+        """
+        AQUI VAI A FOTO ENVIADA PELO ALUNO (PEDIR UM VIDEO TALVEZ?)
+        REMOVER DELAYS, WAITS, ETC...
+        """
+
         # Criar threads aqui
         thread_contagem_1 = threading.Thread(target= lambda: self._iniciar_contagem_regressiva(delay)) 
         thread_start_camera = threading.Thread(target=self._start_camera)

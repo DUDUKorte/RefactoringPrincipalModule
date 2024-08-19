@@ -52,7 +52,8 @@ class SistemaPrincipal:
         # notificar o banco de dados com o id do aluno reconhecido
         # no sistema do reconhecimento facial
         if id == 'DESCONHECIDO':
-            self.bancoAlunos.aluno_reconhecido('DESCONHECIDO')
+            #self.bancoAlunos.aluno_reconhecido('DESCONHECIDO')
+            pass
 
         if not id in self.cooldown_alunos:
             self.bancoAlunos.aluno_reconhecido(id)
@@ -61,7 +62,7 @@ class SistemaPrincipal:
         else:
             time_now = time.time()
             if time_now - self.cooldown_alunos[id] >= 30:
-                self.cooldown_alunos[id] = time_now
+                self.cooldown_alunos.pop(id)
                 self.notificacaoReconhecimento(id)
 
     #PRONTO

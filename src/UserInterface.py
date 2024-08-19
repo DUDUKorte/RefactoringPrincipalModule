@@ -59,7 +59,7 @@ class Interface(customtkinter.CTk):
         self.mainSysFrame.grid(row=0, column=0, sticky="nsew", padx=100) # show mainsys frame
         print('main sys started')
     
-    #Evento para iniciar
+    #Evento para iniciar o registro
     def startRegister(self):
         self.main_frame.grid_forget() # Remove main frame
         self.registerFrame.grid(row=0, column=0, sticky="nsew", padx=100) # show register frame
@@ -74,6 +74,7 @@ class Interface(customtkinter.CTk):
     def back_event(self, currentFrame = None):
         currentFrame.grid_forget()  # remove main frame
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100)  # show login frame
+        print('back to menu')
     
     def back_and_stop(self, currentFrame = None):
         self.mainSys.stop_face_recognition() #Finaliza a face recognition
