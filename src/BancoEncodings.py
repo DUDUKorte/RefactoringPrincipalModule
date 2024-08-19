@@ -207,4 +207,7 @@ class BancoEncodings:
     # Aqui seria a função de carregar os .enc do banco de dados online real
     def load_face_encoding(self):
         print('CARREGANDO FACE ENCODINGS CONHECIDOS')
+        #TODO
+        plog('CRIAR NOVO FACE ENCODINGS')
+        #return self._load_encoded_lists_onefile('./dataset_faces.enc')
         return self._load_all_faces_list()

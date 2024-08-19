@@ -1,6 +1,11 @@
 print()
 from SistemaPrincipal import SistemaPrincipal as MainSystem
 from UserInterface import Interface
+#TODO
+"""
+- clean tmp .jpeg
+- remove load encoding on start
+"""
 if __name__ == "__main__":
     print('start')
     mainSys = MainSystem()
