@@ -2,11 +2,14 @@ import pickle, os, face_recognition
 from DebugTools_ import *
 
 class BancoEncodings: 
-    def __init__(self, path):
+    def __init__(self, path: str, obj_fireBaseManager: object):
         """Classe BancoEncodings
         Tem métodos para manipular os encodings do banco de dados local
         como salvar, carregar, recarregar etc...
         """
+
+        # Carregar encdings do FireBaseManager
+        self.obj_fireBaseManager = obj_fireBaseManager
 
         # Caminho onde está a pasta raíz dos encodings/fotos de todos os usuários
         self.path = path #Exemplo: /pasta1/pasta2/Encodings/
@@ -19,9 +22,14 @@ class BancoEncodings:
         # Converter o caminho ('C:/pasta/pasta/pasta') para o caminho do sistema normal
         #drive_letter = self.path[:2]
         self.slash = '/' #BUG: Para diretórios do windows funicona tanto / quanto \ mas no linux só funciona /, pra trocar mais fácil eu fiz essa variável
-
         self.model='large' # Modelo do face_recognition para usar, 'small' utiliza apenas 5 pontos, 'large' utiliza 128
         self.num_jitters=10 # Quantidade de vezes que a foto é distorcida para fazer o encoding da foto nos métodos
+
+# FUNÇÕES PARA MANIPULAR O BANCO DO FIREBASE ===========================================================================
+
+
+    
+# FUNÇÕES PARA MANIPULAR O BANCO LOCAL ===========================================================================
 
     # carrega um arquivo .enc específico
     def _load_enc_file(self, specific_path):
@@ -168,6 +176,13 @@ class BancoEncodings:
             ids_list, endoded_faces = pickle.load(f)
         return [ids_list, endoded_faces]
 
+    def _load_FBM_files(self):
+        encodings_data = self.obj_fireBaseManager.load_storage_files()
+        # Salvar temporariamente aqui os encodings para minimizar os downloads
+        self.obj_fireBaseManager.create_temp_file(encodings_data)
+        return encodings_data
+
+
 # FUNÇÕES "PÚBLICAS" ===========================================================================
 
     def registrar_novo_usuario(self, id, lista_de_fotos, save_encoding):
@@ -196,9 +211,13 @@ class BancoEncodings:
         print(f'Fotos salvas com sucesso no diretório: "{self.path}{self.slash}{id}"')
         
         if save_encoding:
+            #TODO
+            # Substituir pelo upload do FBM
             self._encode_all_faces_list(force=False)
 
     def remove_id(self, id):
+        #TODO
+        # Colocar função do FBM
         if os.path.exists(f'{self.path}{self.slash}{id}'):
             for file in os.listdir(f'{self.path}{self.slash}{id}'):
                 os.remove(f'{self.path}{self.slash}{id}{self.slash}{file}')
@@ -210,6 +229,10 @@ class BancoEncodings:
     def load_face_encoding(self):
         print('CARREGANDO FACE ENCODINGS CONHECIDOS')
         #TODO
-        plog('CRIAR NOVO FACE ENCODINGS')
+        # Colocar aqui o load do banco de dados do FBM
+        #self.obj_fireBaseManager.load_storage_files()
+
+        #plog('CRIAR NOVO FACE ENCODINGS')
         #return self._load_encoded_lists_onefile('./dataset_faces.enc')
-        return self._load_all_faces_list()
+        #return self._load_all_faces_list()
+        return self._load_FBM_files()

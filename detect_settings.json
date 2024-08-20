@@ -6,6 +6,5 @@
 "tolerance" : 0.45,
 "min_detection_confidence" : 0.4,
 "distance_percentage" : 0.13,
-"liveness_detection" : true,
-"DEBUG" : true 
+"liveness_detection" : true
 }

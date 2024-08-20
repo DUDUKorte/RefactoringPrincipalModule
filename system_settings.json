@@ -1,5 +1,6 @@
 {
     "alunos_planilha_path" : "./",
     "alunos_planilha" : "alunos_registro",
-    "banco_faces_registradas_path" : "dataset_faces"
+    "banco_faces_registradas_path" : "dataset_faces",
+    "debug" : true
 }

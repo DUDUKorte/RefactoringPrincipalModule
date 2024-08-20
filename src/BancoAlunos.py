@@ -2,11 +2,12 @@ from datetime import datetime
 import pandas as pd
 
 class BancoAlunos:
-    def __init__(self, path, nome_planilha):
+    def __init__(self, path, nome_planilha, obj_fireBaseManager: object):
         # dataframe de um excel
         # id | nome
         self.path = path
         self.nome_planilha = nome_planilha
+        self.obj_fireBaseManager = obj_fireBaseManager
 
         # Aqui o banco de dados iria carregar os dados dos alunos
         #TODO
@@ -14,19 +15,15 @@ class BancoAlunos:
         BAIXAR AQUI OS DADOS DOS ALUNOS
         MATRICULA : {NOME: "", TURMA: "", ANO: ""}
         """
-        self.dados_alunos = {
-            "Esquilo": "Eduardo",
-            "Rodrigo": "Rodrigo",
-            "IDThiagoló": "Thiago ló",
-            "IDOdair" : "Odair Moreria"
-        }
+        self.dados_alunos = self.obj_fireBaseManager.get_data()
 
     def aluno_reconhecido(self, _id):
         if _id not in self.dados_alunos:
-            nome_aluno = 'DESCONHECIDO'
-        else:
-            # Pega nome do aluno nos dados json
-            nome_aluno = str(self.dados_alunos[_id]) 
+            return None
+        
+        # Pega nome do aluno nos dados json
+        nome_aluno = str(self.dados_alunos[_id][0])
+        turma_aluno = str(self.dados_alunos[_id][1])
         
         date_data = datetime.now() # Pega o horário atual
         horario_atual = date_data.strftime('%H:%M:%S')
@@ -35,6 +32,7 @@ class BancoAlunos:
         dados = {
             "data" : [[
                 nome_aluno,
+                turma_aluno,
                 horario_atual,
                 data_atual,
                 _id
@@ -42,6 +40,7 @@ class BancoAlunos:
 
             "columns" : [
                 'Aluno',
+                'Turma',
                 'Horário',
                 'Data',
                 'ID'
@@ -49,6 +48,7 @@ class BancoAlunos:
         }
 
         self._adicionar_dado_planilha(dados, self.nome_planilha)
+        self.obj_fireBaseManager.send_notification(_id)
 
     def _adicionar_dado_planilha(self, dados, nome_planilha):
         #Adicionar dados na planilha

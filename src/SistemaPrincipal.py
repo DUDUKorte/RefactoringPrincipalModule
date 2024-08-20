@@ -5,6 +5,7 @@ from DebugTools_ import *
 from BancoAlunos import BancoAlunos
 from ProcessoReconhecimento import ProcessoReconhecimento
 from BancoEncodings import BancoEncodings
+from FireBaseManager import FireBaseManager # <==========
 from Camera import Camera
 from ModuloDeTestes import ModuloDeTestes
 from ModuloDeCadastro import ModuloDeCadastro
@@ -15,12 +16,13 @@ class SistemaPrincipal:
         # primeiras operações do sistema, carregar tudo, iniciar câmera, etc
         print(f'INFO: CARREGANDO CONFIGURAÇÕES...')
         self.load_config_files()
-        
-        # Criação das classes necessárias
-        #self.faces_registradas_path = '\DUDU\Programinhas_PC\TCC\ModuloPrincipal\known_faces'
         self.faces_registradas_path = self.system_settings['banco_faces_registradas_path']
-        self.bancoEncodings = BancoEncodings(self.faces_registradas_path)
-        self.bancoAlunos = BancoAlunos(self.system_settings['alunos_planilha_path'], self.system_settings['alunos_planilha'])
+
+        # Criação das classes necessárias
+        print(f'INFO: CARREGANDO DATA BASE')
+        self.obj_fireBaseManager = FireBaseManager(self.fbm_config)
+        self.bancoEncodings = BancoEncodings(self.faces_registradas_path, self.obj_fireBaseManager)
+        self.bancoAlunos = BancoAlunos(self.system_settings['alunos_planilha_path'], self.system_settings['alunos_planilha'], self.obj_fireBaseManager)
         
         print('INFO: CARREGANDO FACES CODIFICADAS...')
         self.encoded_faces = self.bancoEncodings.load_face_encoding()
@@ -91,6 +93,7 @@ class SistemaPrincipal:
     def load_config_files(self):
         with open("system_settings.json", 'r') as f:
             self.system_settings = json.load(f)
+            update_debug_var(self.system_settings['debug'])
 
         with open("detect_settings.json", 'r') as f:
             self.detect_settings = json.load(f)
@@ -99,6 +102,10 @@ class SistemaPrincipal:
         with open("cam_settings.json", 'r') as f:
             self.cam_settings = json.load(f)
         print(f'INFO: CONFIGURAÇÕES DE CÂMERA CARRREGADO!')
+
+        with open("fbm_config.json", 'r') as f:
+            self.fbm_config = json.load(f)
+        print(f'INFO: FBM CONFIG CARREGADO!')
     
     #PRONTO
     def _reload_encoded_faces(self):
