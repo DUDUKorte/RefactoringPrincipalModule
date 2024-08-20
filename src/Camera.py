@@ -57,7 +57,7 @@ class Camera:
                     face_location = objeto_reconhecimento_facial.get_main_face_location(frame)
                     if face_location:
                         if len(frames_capturados) >= 30 and self.running_face_register:
-                            print(len(frames_capturados))
+                            #print(len(frames_capturados))
                             self.stop_face_register()
                             self.stop_camera()
 

@@ -8,13 +8,6 @@ if debug_var:
         print(log)
 
     def rectanglelog(frame, locations, color = (0,0,255), thickness = 1, rescale_percntage = 100):
-        rescale_percntage /= 100
-        for (top, right, bottom, left), in zip(locations,):
-            top *= rescale_percntage
-            right *= rescale_percntage
-            bottom *= rescale_percntage
-            left *= rescale_percntage
-            
         cv2.rectangle(frame, (locations[3], locations[0]), (locations[1], locations[2]), color, thickness)
 
     def textlog(frame, text, locations, font = cv2.FONT_HERSHEY_COMPLEX, font_size = 1, color = (0,255,0), thickness = 1, bottom = False):

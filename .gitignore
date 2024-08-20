@@ -3,4 +3,7 @@
 *.log
 *.enc
 .venv
+.mfi
+google*
+cache
 dataset_faces
