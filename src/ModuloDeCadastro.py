@@ -1,4 +1,4 @@
-import time, threading
+import time, threading, winsound
 
 class ModuloDeCadastro:
     def __init__(self, id=None, codificarFace=True, carregarCodificacao=True, sistema_principal=None):
@@ -62,6 +62,7 @@ class ModuloDeCadastro:
         for i in range(segundos, 0, -1):
             print(f'Iniciando em {i} segundos...')
             time.sleep(1)
+            winsound.Beep(2500, 250)
         print('CONTAGEM REGRESSIVA TERMINADA')
 
     def _salvar_fotos(self):

@@ -33,7 +33,7 @@ class Camera:
         return cv2.resize(frame, (width, height), interpolation=cv2.INTER_AREA)
 
     #INICIALIZA CAMERA, PRECISA SER THREAD
-    def inicializar_camera(self, objeto_reconhecimento_facial, encoded_faces, nome_esperado = "AaEsquilo"):
+    def inicializar_camera(self, objeto_reconhecimento_facial, encoded_faces, nome_esperado = "None"):
         face_error = 0
         total_face_encoding = 0
         face_correct = 0
@@ -61,7 +61,7 @@ class Camera:
                             self.stop_face_register()
                             self.stop_camera()
 
-                        cv2.rectangle(frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
+                        cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
                         
                         if self.running_face_recognition:
                             face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
@@ -82,7 +82,7 @@ class Camera:
                     total_frames += 1
                 # Atualiza quadro da tela
                 # Diminui o tamanho do frame
-                bgr_frame = self.escalonar_frame(bgr_frame, 25)
+                bgr_frame = self.escalonar_frame(bgr_frame, self.rescale_porcentage)
                 cv2.imshow('TESTE RODANDO', bgr_frame)
                 cv2.waitKey(1)
             else:

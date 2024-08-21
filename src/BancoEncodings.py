@@ -1,5 +1,6 @@
 import pickle, os, face_recognition
 from DebugTools_ import *
+from tqdm import tqdm
 
 class BancoEncodings: 
     def __init__(self, path: str, obj_fireBaseManager: object):
@@ -24,6 +25,7 @@ class BancoEncodings:
         self.slash = '/' #BUG: Para diretórios do windows funicona tanto / quanto \ mas no linux só funciona /, pra trocar mais fácil eu fiz essa variável
         self.model='large' # Modelo do face_recognition para usar, 'small' utiliza apenas 5 pontos, 'large' utiliza 128
         self.num_jitters=10 # Quantidade de vezes que a foto é distorcida para fazer o encoding da foto nos métodos
+        self.force_reload = False # Força baixar novamente todos os arquivos
 
 # FUNÇÕES PARA MANIPULAR O BANCO DO FIREBASE ===========================================================================
 
@@ -61,7 +63,7 @@ class BancoEncodings:
 # FUNÇÕES COM ENCODE E LOAD DE TODAS AS FACES ARQUIVO POR ARQUIVO COM LISTAS ===========================================================================
 
     # Apenas faz o encoding de todas as faces e salva o arquivo .enc para cada foto
-    def _encode_all_faces_list(self, force = False):
+    def _encode_all_faces_list(self, force = False, clean_jpg = False):
         log_file = 'encoding_00.log'
         erros = 0
         erros_log = []
@@ -70,10 +72,10 @@ class BancoEncodings:
         start_logFile(log_file)
 
         for ids in os.listdir(self.path):
-            for file in os.listdir(f'{self.path}{self.slash}{ids}'):
+            for file in tqdm(os.listdir(f'{self.path}{self.slash}{ids}')):
                 if not f'{self.path}{self.slash}{ids}{self.slash}{file}'.endswith('.enc'):
                     if not os.path.exists(f'{self.path}{self.slash}{ids}{self.slash}{file}.enc') or force:
-                        plog(f'CODIFICANDO FACE: {ids}...')
+                        #plog(f'CODIFICANDO FACE: {ids}...')
                         #fazer encoding, criar arquivo e salvar
                         file_loaded = face_recognition.load_image_file(f'{self.path}{self.slash}{ids}{self.slash}{file}')
                         # Dependendo da versão da biblioteca face_recognition precisa usar [0]
@@ -91,22 +93,32 @@ class BancoEncodings:
                         if codificacao_bem_sucedida:
                             #Salvar arquivo
                             self._save_enc_file([ids, file_encoded], f'{self.path}{self.slash}{ids}{self.slash}{file}')
-                            plog(f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                            #plog(f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
                             #Adicionar ao arquivo de log
                             add_to_logFile(log_file, f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
                             #excluir imagem TODO
-                            #os.remove(f'{self.path}{self.slash}{ids}{self.slash}{file}')
+                            if clean_jpg:
+                                try:
+                                    os.remove(f'{self.path}{self.slash}{ids}{self.slash}{file}')
+                                    #plog(f'ARQUIVO .JPG REMOVIDO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                                    add_to_logFile(f'ARQUIVO .JPG REMOVIDO COM SUCESSO : {self.path}{self.slash}{ids}{self.slash}{file}')
+                                except:
+                                    #plog(f'FALHA AO REMOVER .JPG: {self.path}{self.slash}{ids}{self.slash}{file}')
+                                    add_to_logFile(f'FALHA AO REMOVER .JPG: {self.path}{self.slash}{ids}{self.slash}{file}')
                         else:
-                            plog(f'ERRO AO CODIFICAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
+                            #plog(f'ERRO AO CODIFICAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
                             erros += 1
                             erros_log.append(f'ERRO AO CODIFICAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
                             add_to_logFile(log_file, f'ERRO AO CODIFICAR ARQUIVO: {self.path}{self.slash}{ids}{self.slash}{file}')
                     else:
-                        plog(f'INFO: CODIFICAÇÃO JÁ EXISTENTE: {self.path}{self.slash}{ids}{self.slash}{file}')
+                        #plog(f'INFO: CODIFICAÇÃO JÁ EXISTENTE: {self.path}{self.slash}{ids}{self.slash}{file}')
                         add_to_logFile(log_file, f'INFO: CODIFICAÇÃO JÁ EXISTENTE: {self.path}{self.slash}{ids}{self.slash}{file}')
 
         for i in erros_log: plog(i)
         plog(f'ERROS TOTAIS: {erros}')
+        plog(f'SALVANDO NO BANCO DE DADOS...')
+        #BUG
+        self.obj_fireBaseManager.update_storage_files(self.path, {'samu_zin' : '34234'})
 
     # Apenas carrega todas as codificações para listas e retorna elas
     def _load_all_faces_list(self):
@@ -177,9 +189,8 @@ class BancoEncodings:
         return [ids_list, endoded_faces]
 
     def _load_FBM_files(self):
-        encodings_data = self.obj_fireBaseManager.load_storage_files()
+        encodings_data = self.obj_fireBaseManager.load_storage_files(self.force_reload)
         # Salvar temporariamente aqui os encodings para minimizar os downloads
-        self.obj_fireBaseManager.create_temp_file(encodings_data)
         return encodings_data
 
 

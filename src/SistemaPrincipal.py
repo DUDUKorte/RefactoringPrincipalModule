@@ -1,4 +1,4 @@
-import json, time
+import json, time, winsound
 from DebugTools_ import *
 
 #Classes imports
@@ -17,7 +17,6 @@ class SistemaPrincipal:
         print(f'INFO: CARREGANDO CONFIGURAÇÕES...')
         self.load_config_files()
         self.faces_registradas_path = self.system_settings['banco_faces_registradas_path']
-
         # Criação das classes necessárias
         print(f'INFO: CARREGANDO DATA BASE')
         self.obj_fireBaseManager = FireBaseManager(self.fbm_config)
@@ -55,10 +54,12 @@ class SistemaPrincipal:
         # no sistema do reconhecimento facial
         if id == 'DESCONHECIDO':
             #self.bancoAlunos.aluno_reconhecido('DESCONHECIDO')
-            pass
+            winsound.Beep(1800, 500)
+            return None
 
         if not id in self.cooldown_alunos:
             self.bancoAlunos.aluno_reconhecido(id)
+            winsound.Beep(2500, 500)
             self.cooldown_alunos[id] = time.time()
 
         else:
@@ -77,6 +78,7 @@ class SistemaPrincipal:
                                                   sistema_principal = self
                                                 )
         obj_modulo_de_cadastro.iniciar_cadastro()
+
 
     #PRONTO
     def start_user_remove(self, id = '1'):
@@ -109,4 +111,6 @@ class SistemaPrincipal:
     
     #PRONTO
     def _reload_encoded_faces(self):
-        self.encoded_faces = self.bancoEncodings._load_all_faces_list()
+        #self.encoded_faces = self.bancoEncodings._load_all_faces_list()
+        self.encoded_faces = self.bancoEncodings.load_face_encoding()
+        plog(f'ENCODED FACES ATUALIZADO')

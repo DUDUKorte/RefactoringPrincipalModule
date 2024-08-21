@@ -1,6 +1,7 @@
 from DebugTools_ import *
 import os, pickle, time, json
 import firebase_admin
+from tqdm import tqdm
 from firebase_admin import credentials
 from firebase_admin import storage
 from firebase_admin import firestore
@@ -41,7 +42,7 @@ class FireBaseManager:
 
     # Atualiza todos os dados no storage
     def update_storage_files(self, path_to_encodings, data_base : dict):
-        for matricula in os.listdir(path_to_encodings):
+        for matricula in tqdm(os.listdir(path_to_encodings)):
             # Verificar se existe pasta da matricula no firebase
             if self._if_path_exists(f'{self.prefix_path}/{matricula}/'):
                 pass
@@ -56,14 +57,14 @@ class FireBaseManager:
                     # Verificar se o arquivo já está no storage
                     if self._if_path_exists(f'{self.prefix_path}/{matricula}/{file}'):
                         pass
-                        plog('EXISTE')
+                        #plog('EXISTE')
                     else:
                         #Upar Arquivo aqui
                         self._upload_file(f'{path_to_encodings}/{matricula}/{file}', f'{self.prefix_path}/{matricula}/{file}')
                         pass
 
     # Carrega todos os .enc do storage
-    def load_storage_files(self):
+    def load_storage_files(self, force: bool = False):
         #TODO
         if os.path.exists(f'{self.cache_path}/tmp_db_files.enc'):
             with open(f'{self.cache_path}/tmp_db_files.enc', 'rb') as f:
@@ -91,12 +92,12 @@ class FireBaseManager:
 
         start_time = time.time()
         # Baixar os arquivos, ler, interpretar e retornar a lista
-        for blob in blobs:
+        for blob in tqdm(blobs):
             for path in blob.name.split(','):
                 if path.endswith('.enc'):
                     try:
                         #b_file = self._read_file(f'{path}')
-                        b_file_path = self._download_file(f'{path}')
+                        b_file_path = self._download_file(f'{path}', force=force)
 
                         # Ler arquivo em rb e excluir
                         with open(b_file_path, 'rb') as f:
@@ -104,13 +105,13 @@ class FireBaseManager:
                             ids_list.append(tmp_ids_list)
                             encoded_faces.append(tmp_encoded_faces)
                             add_to_logFile(log_file, f'SUCESSO AO CARREGAR ARQUIVO: {b_file_path}')
-                        os.remove(b_file_path)
+                        #os.remove(b_file_path)
                     except:
                         add_to_logFile(log_file, f'ERRO AO CARREGAR ARQUIVO: {path}')
                         pass
 
 
-        plog(f'{time.time() - start_time} TO LOAD ALL ENCODINGS')
+        #plog(f'{time.time() - start_time} TO LOAD ALL ENCODINGS')
         return [ids_list, encoded_faces]
 
     def create_temp_file(self, encoding_data):
@@ -128,13 +129,17 @@ class FireBaseManager:
         plog(f'ARQUIVO {file_name} ENVIADO COM SUCESSO')
 
     # Baixar arquivo para diretório local
-    def _download_file(self, blob_path: str):
+    def _download_file(self, blob_path: str, force: bool = False):
+        file_name = blob_path.split('/')[-1]
+        matricula = blob_path.split('/')[-2]
         blob = self.bucket.blob(blob_path)
-        file_name = [name for name in blob.name.split('/') if name.endswith('.enc')][0]
-
-        blob.download_to_filename(f'{self.cache_path}/{self.tmp_enc_path}/{file_name}')
-        plog(f'ARQUIVO BAIXADO COM SUCESSO')
-        return f'{self.cache_path}/{self.tmp_enc_path}/{file_name}'
+        if not os.path.exists(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}'):
+            os.mkdir(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}')
+        if not os.path.exists(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}/{file_name}') or force:
+            blob.download_to_filename(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}/{file_name}')
+        
+        #plog(f'ARQUIVO BAIXADO COM SUCESSO')
+        return f'{self.cache_path}/{self.tmp_enc_path}/{matricula}/{file_name}'
 
     # Ler arquivo diretamente na memória NÃO TÁ FUNCIONANDO MT BEM
     def _read_file(self, file_name: str):
@@ -165,7 +170,8 @@ if __name__ == '__main__':
     #firebasemanager._upload_files('foto_0.jpg.enc', 'FaceRecognitionFiles/Alunos/esquilo/foto_0.enc')
     #firebasemanager._create_folder('FaceRecognitionFiles/Alunos/esquilo/')
     #firebasemanager._if_path_exists('FaceRecognitionFiles/Alunos/esquilo/')
-    #firebasemanager.update_storage_all('dataset_faces')
+    #firebasemanager.update_storage_files('dataset_faces', {'gabecm': '2434'})
     #firebasemanager.load_storage_files()
-    firebasemanager.get_data()
-    firebasemanager.send_notification('esquilo_')
+    #firebasemanager.get_data()
+    #firebasemanager.send_notification('esquilo_')
+    firebasemanager.load_storage_files()
