@@ -100,3 +100,6 @@ class ProcessoReconhecimento:
             time.sleep(1/2)
         self.cooldown = False
         print('CONTAGEM REGRESSIVA TERMINADA')
+
+    def update_encoded_faces(self):
+        self.encoded_faces = self.sistemaPrincipal.encoded_faces

@@ -44,7 +44,7 @@ class FaceRecognitionMethod:
                 if len(face_locations) < i:
                     continue
                 return None
-            # Verficar se o rost está dentro da distância mínima definida
+            # Verficar se o rost está dentro da distância mínima definida ou está registrando uma nova pessoa
             if largura < frame_width * self.distance:
                 plog(f'PESSOA FORA DISTÂNCIA MÍNIMA')
                 if len(face_locations) < i:
