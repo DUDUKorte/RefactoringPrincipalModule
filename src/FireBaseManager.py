@@ -133,7 +133,7 @@ class FireBaseManager:
         blob = self.bucket.blob(blob_path)
         if not os.path.exists(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}'):
             os.mkdir(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}')
-        if not os.path.exists(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}/{file_name}') or force:
+        if not os.path.exists(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}/{file_name}') or force_overwrite:
             blob.download_to_filename(f'{self.cache_path}/{self.tmp_enc_path}/{matricula}/{file_name}')
         
         #plog(f'ARQUIVO BAIXADO COM SUCESSO')
