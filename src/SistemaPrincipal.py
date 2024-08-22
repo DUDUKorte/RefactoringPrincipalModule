@@ -1,4 +1,4 @@
-import json, time, winsound
+import json, time#, winsound
 from DebugTools_ import *
 
 #Classes imports
@@ -54,12 +54,12 @@ class SistemaPrincipal:
         # no sistema do reconhecimento facial
         if id == 'DESCONHECIDO':
             #self.bancoAlunos.aluno_reconhecido('DESCONHECIDO')
-            winsound.Beep(1800, 500)
+            #winsound.Beep(1800, 500)
             return None
 
         if not id in self.cooldown_alunos:
             self.bancoAlunos.aluno_reconhecido(id)
-            winsound.Beep(2500, 500)
+            #winsound.Beep(2500, 500)
             self.cooldown_alunos[id] = time.time()
 
         else:

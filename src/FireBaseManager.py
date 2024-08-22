@@ -12,6 +12,7 @@ class FireBaseManager:
         credentials_path = fbm_config["credentials_path"]
         storageBucketName = fbm_config["storage_bucket_name"]
         self.prefix_path = fbm_config["prefix_path"]
+        self.force_reload = fbm_config["force_reload"]
         self.cache_path = './cache'
         self.tmp_enc_path = 'tmp_enc'
 
@@ -64,11 +65,8 @@ class FireBaseManager:
                         pass
 
     # Carrega todos os .enc do storage
-    def load_storage_files(self, force: bool = False):
-        #TODO
-        if os.path.exists(f'{self.cache_path}/tmp_db_files.enc'):
-            with open(f'{self.cache_path}/tmp_db_files.enc', 'rb') as f:
-                temp_enc_file = pickle.load(f)
+    def load_storage_files(self, force: bool = None):
+        force = self.force_reload if not force else force
 
         #Criar arquivo log para salvar tudo
         log_file = 'load_encodings_db_00.log'
@@ -97,7 +95,7 @@ class FireBaseManager:
                 if path.endswith('.enc'):
                     try:
                         #b_file = self._read_file(f'{path}')
-                        b_file_path = self._download_file(f'{path}', force=force)
+                        b_file_path = self._download_file(f'{path}', force_overwrite=force)
 
                         # Ler arquivo em rb e excluir
                         with open(b_file_path, 'rb') as f:
@@ -129,7 +127,7 @@ class FireBaseManager:
         plog(f'ARQUIVO {file_name} ENVIADO COM SUCESSO')
 
     # Baixar arquivo para diretório local
-    def _download_file(self, blob_path: str, force: bool = False):
+    def _download_file(self, blob_path: str, force_overwrite: bool = False):
         file_name = blob_path.split('/')[-1]
         matricula = blob_path.split('/')[-2]
         blob = self.bucket.blob(blob_path)

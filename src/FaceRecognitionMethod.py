@@ -22,7 +22,7 @@ class FaceRecognitionMethod:
         self.distance = detect_settings['distance_percentage']
         self.liveness_detection = detect_settings['liveness_detection']
 
-    def get_main_face_location(self, frame, register = False):
+    def get_main_face_location(self, frame):
         face_locations = self._get_face_locations(frame)
         maior_area = 0
         main_face_location = None
@@ -45,7 +45,7 @@ class FaceRecognitionMethod:
                     continue
                 return None
             # Verficar se o rost está dentro da distância mínima definida ou está registrando uma nova pessoa
-            if largura < frame_width * self.distance or register:
+            if largura < frame_width * self.distance:
                 plog(f'PESSOA FORA DISTÂNCIA MÍNIMA')
                 if len(face_locations) < i:
                     continue

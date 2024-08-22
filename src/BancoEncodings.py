@@ -25,7 +25,7 @@ class BancoEncodings:
         self.slash = '/' #BUG: Para diretórios do windows funicona tanto / quanto \ mas no linux só funciona /, pra trocar mais fácil eu fiz essa variável
         self.model='large' # Modelo do face_recognition para usar, 'small' utiliza apenas 5 pontos, 'large' utiliza 128
         self.num_jitters=10 # Quantidade de vezes que a foto é distorcida para fazer o encoding da foto nos métodos
-        self.force_reload = False # Força baixar novamente todos os arquivos
+        self.clean_jpg = False
 
 # FUNÇÕES PARA MANIPULAR O BANCO DO FIREBASE ===========================================================================
 
@@ -63,7 +63,8 @@ class BancoEncodings:
 # FUNÇÕES COM ENCODE E LOAD DE TODAS AS FACES ARQUIVO POR ARQUIVO COM LISTAS ===========================================================================
 
     # Apenas faz o encoding de todas as faces e salva o arquivo .enc para cada foto
-    def _encode_all_faces_list(self, force = False, clean_jpg = False):
+    def _encode_all_faces_list(self, force = False, clean_jpg : bool= None):
+        clean_jpg = self.clean_jpg if not clean_jpg else clean_jpg
         log_file = 'encoding_00.log'
         erros = 0
         erros_log = []
@@ -189,7 +190,7 @@ class BancoEncodings:
         return [ids_list, endoded_faces]
 
     def _load_FBM_files(self):
-        encodings_data = self.obj_fireBaseManager.load_storage_files(self.force_reload)
+        encodings_data = self.obj_fireBaseManager.load_storage_files()
         # Salvar temporariamente aqui os encodings para minimizar os downloads
         return encodings_data
 

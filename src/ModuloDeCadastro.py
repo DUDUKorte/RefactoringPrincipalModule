@@ -1,4 +1,4 @@
-import time, threading, winsound
+import time, threading#, winsound
 
 class ModuloDeCadastro:
     def __init__(self, id=None, codificarFace=True, carregarCodificacao=True, sistema_principal=None):
@@ -52,7 +52,7 @@ class ModuloDeCadastro:
     def _start_camera(self):
         # inicialização da câmera usando threading, se necessário
         # 0 é identificado como camera padrão(mudar caso nescessario{Eduardo})
-        self.objeto_reconhecimento_facial.tolerance = 0 #Tira a distância mínima da câmera
+        self.objeto_reconhecimento_facial.distance = 100 #Tira a distância mínima da câmera
         resultados = self.camera.inicializar_camera(self.objeto_reconhecimento_facial, self.encoded_faces)
         self.face_encodings = resultados[4]
         self.lista_de_fotos = resultados[5]
@@ -62,7 +62,7 @@ class ModuloDeCadastro:
         for i in range(segundos, 0, -1):
             print(f'Iniciando em {i} segundos...')
             time.sleep(1)
-            winsound.Beep(2500, 250)
+            #winsound.Beep(2500, 250)
         print('CONTAGEM REGRESSIVA TERMINADA')
 
     def _salvar_fotos(self):

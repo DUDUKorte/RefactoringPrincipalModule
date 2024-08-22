@@ -61,7 +61,7 @@ class Camera:
                             self.stop_face_register()
                             self.stop_camera()
 
-                        cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (0, 0, 255), 1)
+                        cv2.rectangle(bgr_frame, (face_location[3], face_location[0]), (face_location[1], face_location[2]), (70, 217, 65), 2)
                         
                         if self.running_face_recognition:
                             face_encoding = objeto_reconhecimento_facial.get_encoded_face(frame, face_location)
