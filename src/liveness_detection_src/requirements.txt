@@ -1,6 +1,6 @@
 easydict==1.10
 numpy==1.23.5
-tqdm==4.64.1
+tqdm==4.66.3
 torchvision
 torch
 opencv-python==4.6.0.66
