@@ -3,7 +3,7 @@ from DebugTools_ import *
 from tqdm import tqdm
 
 class BancoEncodings: 
-    def __init__(self, path: str, obj_fireBaseManager: object):
+    def __init__(self, path: str, obj_fireBaseManager): #TODO
         """Classe BancoEncodings
         Tem métodos para manipular os encodings do banco de dados local
         como salvar, carregar, recarregar etc...
@@ -34,7 +34,7 @@ class BancoEncodings:
 # FUNÇÕES PARA MANIPULAR O BANCO LOCAL ===========================================================================
 
     # carrega um arquivo .enc específico
-    def _load_enc_file(self, specific_path):
+    def _load_enc_file(self, specific_path:str):
         """
         specific_path: caminho específico do arquivo .enc para carregar;
         """
@@ -46,7 +46,7 @@ class BancoEncodings:
         return [ids_list, endoded_faces] # Retorna uma lista com as duas listas para utilizar
 
     # salva um arquivo .enc específico em um diretório
-    def _save_enc_file(self, encoded_faces, specific_path = None):
+    def _save_enc_file(self, encoded_faces:list, specific_path = None):
         """
         encoded_faces: lista com duas listas com todas as codificações e IDs prontas;
         specific_path=None: Especifica um caminho e nome de arquivo para falvar as 
@@ -63,7 +63,7 @@ class BancoEncodings:
 # FUNÇÕES COM ENCODE E LOAD DE TODAS AS FACES ARQUIVO POR ARQUIVO COM LISTAS ===========================================================================
 
     # Apenas faz o encoding de todas as faces e salva o arquivo .enc para cada foto
-    def _encode_all_faces_list(self, force = False, clean_jpg : bool= None):
+    def _encode_all_faces_list(self, force:bool = False, clean_jpg:bool = False):
         clean_jpg = self.clean_jpg if not clean_jpg else clean_jpg
         log_file = 'encoding_00.log'
         erros = 0
@@ -97,7 +97,6 @@ class BancoEncodings:
                             #plog(f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
                             #Adicionar ao arquivo de log
                             add_to_logFile(log_file, f'ARQUIVO CODIFICADO E SALVO COM SUCESSO: {self.path}{self.slash}{ids}{self.slash}{file}')
-                            #excluir imagem TODO
                             if clean_jpg:
                                 try:
                                     os.remove(f'{self.path}{self.slash}{ids}{self.slash}{file}')
@@ -150,7 +149,7 @@ class BancoEncodings:
 # FUNÇÕES COM APENAS UM ARQUIVO E COM LISTA ===========================================================================
 
     # Cria o encoding de todas as faces em um arquivo, armazena em uma lista e salva tudo em um arquivo apenas, em seguida retorna a lista
-    def _encode_all_faces_onefile(self, force = True):
+    def _encode_all_faces_onefile(self, force:bool = True):
         ids_list = []
         encoded_faces = []
         for ids in os.listdir(self.path):
@@ -184,7 +183,7 @@ class BancoEncodings:
         return [ids_list, encoded_faces]
     
     # Carrega um arquivo específico .enc com todos os ids e faces
-    def _load_encoded_lists_onefile(self, file):
+    def _load_encoded_lists_onefile(self, file:str):
         with open(file, 'rb') as f:
             ids_list, endoded_faces = pickle.load(f)
         return [ids_list, endoded_faces]
@@ -197,7 +196,7 @@ class BancoEncodings:
 
 # FUNÇÕES "PÚBLICAS" ===========================================================================
 
-    def registrar_novo_usuario(self, id, lista_de_fotos, save_encoding):
+    def registrar_novo_usuario(self, id:str, lista_de_fotos:list, save_encoding:bool):
         overwrite = False
 
         # Verifique se a codificação da face está ativada
@@ -223,11 +222,9 @@ class BancoEncodings:
         print(f'Fotos salvas com sucesso no diretório: "{self.path}{self.slash}{id}"')
         
         if save_encoding:
-            #TODO
-            # Substituir pelo upload do FBM
             self._encode_all_faces_list(force=False)
 
-    def remove_id(self, id):
+    def remove_id(self, id:str):
         #TODO
         # Colocar função do FBM
         if os.path.exists(f'{self.path}{self.slash}{id}'):
@@ -240,11 +237,4 @@ class BancoEncodings:
     # Aqui seria a função de carregar os .enc do banco de dados online real
     def load_face_encoding(self):
         print('CARREGANDO FACE ENCODINGS CONHECIDOS')
-        #TODO
-        # Colocar aqui o load do banco de dados do FBM
-        #self.obj_fireBaseManager.load_storage_files()
-
-        #plog('CRIAR NOVO FACE ENCODINGS')
-        #return self._load_encoded_lists_onefile('./dataset_faces.enc')
-        #return self._load_all_faces_list()
         return self._load_FBM_files()

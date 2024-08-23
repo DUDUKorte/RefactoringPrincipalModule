@@ -4,7 +4,7 @@ import time, threading
 
 class ProcessoReconhecimento:
     
-    def __init__(self, detect_settings, sistemaPrincipal):
+    def __init__(self, detect_settings:dict, sistemaPrincipal): #TODO
         # self.running define se o while deve estar rodando
         self.running = False
         self.detect_settings = detect_settings
@@ -93,7 +93,7 @@ class ProcessoReconhecimento:
                 cv2.waitKey(1)
         cv2.destroyAllWindows()
 
-    def _iniciar_recognition_cooldown(self, segundos):
+    def _iniciar_recognition_cooldown(self, segundos:int):
         # contagem regressiva antes de começar a registrar
         for i in range(segundos, 0, -1):
             print(f'Passou {i} segundos...')

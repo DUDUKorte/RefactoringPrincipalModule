@@ -2,7 +2,7 @@ from datetime import datetime
 import pandas as pd
 
 class BancoAlunos:
-    def __init__(self, path, nome_planilha, obj_fireBaseManager: object):
+    def __init__(self, path:str, nome_planilha:str, obj_fireBaseManager): #TODO
         # dataframe de um excel
         # id | nome
         self.path = path
@@ -17,7 +17,7 @@ class BancoAlunos:
         """
         self.dados_alunos = self.obj_fireBaseManager.get_data()
 
-    def aluno_reconhecido(self, _id):
+    def aluno_reconhecido(self, _id:str):
         if _id not in self.dados_alunos:
             return None
         
@@ -50,7 +50,7 @@ class BancoAlunos:
         self._adicionar_dado_planilha(dados, self.nome_planilha)
         self.obj_fireBaseManager.send_notification(_id)
 
-    def _adicionar_dado_planilha(self, dados, nome_planilha):
+    def _adicionar_dado_planilha(self, dados:dict, nome_planilha:str):
         #Adicionar dados na planilha
         nome_planilha += '.xlsx'
         data = dados['data']

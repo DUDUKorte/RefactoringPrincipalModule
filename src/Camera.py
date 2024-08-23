@@ -1,7 +1,7 @@
 import cv2, time
 
 class Camera:
-    def __init__(self, cam_param):
+    def __init__(self, cam_param:dict):
         # inicializar câmera
         # pegar valores da câmera para usar (fps, resolução etc)
         self.running_camera = True
@@ -27,13 +27,13 @@ class Camera:
     def get_camera_object(self):
         return self.params["camera_object"]
 
-    def escalonar_frame(self, frame, porcentagem = 75):
+    def escalonar_frame(self, frame:any, porcentagem = 75):
         width = int(frame.shape[1] * porcentagem / 100)
         height = int(frame.shape[0] * porcentagem / 100)
         return cv2.resize(frame, (width, height), interpolation=cv2.INTER_AREA)
 
     #INICIALIZA CAMERA, PRECISA SER THREAD
-    def inicializar_camera(self, objeto_reconhecimento_facial, encoded_faces, nome_esperado = "None"):
+    def inicializar_camera(self, objeto_reconhecimento_facial, encoded_faces:list, nome_esperado:str = "None"): #TODO
         face_error = 0
         total_face_encoding = 0
         face_correct = 0

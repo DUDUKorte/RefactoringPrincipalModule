@@ -49,7 +49,7 @@ class SistemaPrincipal:
         self.processoReconhecimento.running = False
 
     #PRONTO
-    def notificacaoReconhecimento(self, id):
+    def notificacaoReconhecimento(self, id : str):
         # notificar o banco de dados com o id do aluno reconhecido
         # no sistema do reconhecimento facial
         if id == 'DESCONHECIDO':
@@ -69,7 +69,7 @@ class SistemaPrincipal:
                 self.notificacaoReconhecimento(id)
 
     #PRONTO
-    def start_user_register(self, id = '1', codificarFace=True, carregarCodificacao=True):
+    def start_user_register(self, id:str = '1', codificarFace:bool = True, carregarCodificacao:bool = True):
         if not id:
             return 0
         obj_modulo_de_cadastro = ModuloDeCadastro(id,
@@ -81,11 +81,11 @@ class SistemaPrincipal:
 
 
     #PRONTO
-    def start_user_remove(self, id = '1'):
+    def start_user_remove(self, id:str = '1'):
         self.bancoEncodings.remove_id(id)
 
     #PRONTO
-    def start_test_module(self, nomePlanilha = 'PlanilhaTeste01'):
+    def start_test_module(self, nomePlanilha:str = 'PlanilhaTeste01'):
         obj_modulo_de_testes = ModuloDeTestes(self)
         #obj_modulo_de_testes.inicar_teste(nomePlanilha)
         #obj_modulo_de_testes.video_teste(nomePlanilha)

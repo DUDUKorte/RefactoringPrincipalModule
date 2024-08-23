@@ -37,18 +37,17 @@ class FireBaseManager:
         return data
 
     # Envia notificação para o bd
-    def send_notification(self, matricula):
+    def send_notification(self, matricula:str):
         entrada_atual = self.db.collection('Reports').document(f'{matricula}').get().to_dict()['entradas']
         self.db.collection('Reports').document(f'{matricula}').set({"entradas" : entrada_atual+1}, merge=True)
 
     # Atualiza todos os dados no storage
-    def update_storage_files(self, path_to_encodings, data_base : dict):
+    def update_storage_files(self, path_to_encodings:str, data_base:dict):
         for matricula in tqdm(os.listdir(path_to_encodings)):
             # Verificar se existe pasta da matricula no firebase
             if self._if_path_exists(f'{self.prefix_path}/{matricula}/'):
                 pass
             else:
-                #TODO 
                 # VERIFICAR SE A MATRÍCULA EXISTE
                 if matricula in data_base.keys():
                     self._create_folder(f'{self.prefix_path}/{matricula}/')
@@ -65,7 +64,7 @@ class FireBaseManager:
                         pass
 
     # Carrega todos os .enc do storage
-    def load_storage_files(self, force: bool = None):
+    def load_storage_files(self, force:bool = None):
         force = self.force_reload if not force else force
 
         #Criar arquivo log para salvar tudo
@@ -121,13 +120,13 @@ class FireBaseManager:
             pickle.dump(encoding_data, f)
 
     # Enviar o arquivo para o storage
-    def _upload_file(self, file_path: str, file_name: str):
+    def _upload_file(self, file_path:str, file_name:str):
         blob = self.bucket.blob(file_name)
         blob.upload_from_filename(file_path)
         plog(f'ARQUIVO {file_name} ENVIADO COM SUCESSO')
 
     # Baixar arquivo para diretório local
-    def _download_file(self, blob_path: str, force_overwrite: bool = False):
+    def _download_file(self, blob_path:str, force_overwrite:bool = False):
         file_name = blob_path.split('/')[-1]
         matricula = blob_path.split('/')[-2]
         blob = self.bucket.blob(blob_path)
@@ -140,7 +139,7 @@ class FireBaseManager:
         return f'{self.cache_path}/{self.tmp_enc_path}/{matricula}/{file_name}'
 
     # Ler arquivo diretamente na memória NÃO TÁ FUNCIONANDO MT BEM
-    def _read_file(self, file_name: str):
+    def _read_file(self, file_name:str):
         blob = self.bucket.blob(file_name)
         data = blob.download_as_string()
         #data = blob.download_as_bytes(raw_download=True)
@@ -148,12 +147,12 @@ class FireBaseManager:
         return data
 
     # Criar pastas/subpastas dentro do storage
-    def _create_folder(self, folder_name: str):
+    def _create_folder(self, folder_name:str):
         blob = self.bucket.blob(folder_name)
         blob.upload_from_string('')
         plog(f'PASTA {folder_name} CRIADA COM SUCESSO')
 
-    def _if_path_exists(self, path: str):
+    def _if_path_exists(self, path:str):
         blob = self.bucket.blob(f'{path}')
         return blob.exists()
 

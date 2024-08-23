@@ -1,7 +1,7 @@
 {
 "detect_method" : "face_recognition",
 "face_encoding_resample" : 0,
-"model" : "hog",
+"model" : "cnn",
 "locations_upsample" : 0,
 "tolerance" : 0.45,
 "min_detection_confidence" : 0.4,

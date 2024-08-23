@@ -94,7 +94,7 @@ class ModuloDeTestes:
                             print(id)
                             testes += 1
 
-                        #TODO SALVAR NA PLANILHA AQUI
+                        #SALVA NA PLANILHA AQUI
                         self.tempo_medio = (sum(self.tempo_registrado)/len(self.tempo_registrado)) if (len(self.tempo_registrado) > 0) else 0
                         self._aplicar_resultados()
                         self.obj_ModuloFonte.gerarPlanilha(nome_da_planilha)

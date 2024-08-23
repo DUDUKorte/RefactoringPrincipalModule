@@ -14,7 +14,7 @@ class FaceRecognitionMethod:
         self.distance = detect_settings['distance_percentage']
         self.liveness_detection = detect_settings['liveness_detection']
 
-    def update_detect_settings(self, detect_settings):
+    def update_detect_settings(self, detect_settings:dict):
         self.model = detect_settings['model']
         self.locations_upsample = detect_settings['locations_upsample']
         self.encoding_resample = detect_settings['face_encoding_resample']
@@ -22,7 +22,7 @@ class FaceRecognitionMethod:
         self.distance = detect_settings['distance_percentage']
         self.liveness_detection = detect_settings['liveness_detection']
 
-    def get_main_face_location(self, frame):
+    def get_main_face_location(self, frame:any):
         face_locations = self._get_face_locations(frame)
         maior_area = 0
         main_face_location = None
@@ -58,7 +58,7 @@ class FaceRecognitionMethod:
         plog(f'MAIOR ÁREA ENCONTRADA: {maior_area}')
         return main_face_location
 
-    def _get_face_locations(self, frame):
+    def _get_face_locations(self, frame:any):
         # código reutilizado do sistema anterior
         face_locations = face_recognition.face_locations(frame, self.locations_upsample, self.model)
         return face_locations
@@ -66,7 +66,7 @@ class FaceRecognitionMethod:
     def get_encoded_face(self, frame, locations):
         return face_recognition.face_encodings(frame, [locations], self.encoding_resample, 'large')
 
-    def decode_face(self, encoded_faces, face_encoding):
+    def decode_face(self, encoded_faces:list, face_encoding:any):
         # fazer o face_distance com self.tolerance
         # retornar o ID da pessoa reconhecida ou None (não reconheceu)
         try:
@@ -90,7 +90,7 @@ class FaceRecognitionMethod:
         else:
             return None
     
-    def detect_liveness(self, frame, face_location):
+    def detect_liveness(self, frame:any, face_location:tuple):
         if self.liveness_detection:
             #True = Rosto real - False = Foto/Imagm
             return self.liveness_detector.detect_liveness(frame, face_location)
@@ -101,7 +101,7 @@ class FaceRecognitionMethod:
     def load_file(self, file):
         return face_recognition.load_image_file(file)
 
-    def decode_face_lists(self, encoded_faces, face_encoding, distance = False):
+    def decode_face_lists(self, encoded_faces:list, face_encoding:any, distance:bool = False):
         try:
             face_encoding = face_encoding[0]
         except:

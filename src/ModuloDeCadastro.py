@@ -1,7 +1,7 @@
 import time, threading#, winsound
 
 class ModuloDeCadastro:
-    def __init__(self, id=None, codificarFace=True, carregarCodificacao=True, sistema_principal=None):
+    def __init__(self, id:str=None, codificarFace:bool=True, carregarCodificacao:bool=True, sistema_principal=None): #TODO
         self.sistema_principal = sistema_principal
         self.id = id
         self.camera = sistema_principal.camera
@@ -20,7 +20,6 @@ class ModuloDeCadastro:
     def iniciar_cadastro(self):
         delay = 10
 
-        #TODO
         """
         AQUI VAI A FOTO ENVIADA PELO ALUNO (PEDIR UM VIDEO TALVEZ?)
         REMOVER DELAYS, WAITS, ETC...
@@ -57,7 +56,7 @@ class ModuloDeCadastro:
         self.face_encodings = resultados[4]
         self.lista_de_fotos = resultados[5]
 
-    def _iniciar_contagem_regressiva(self, segundos):
+    def _iniciar_contagem_regressiva(self, segundos:int):
         # contagem regressiva antes de começar a registrar
         for i in range(segundos, 0, -1):
             print(f'Iniciando em {i} segundos...')
