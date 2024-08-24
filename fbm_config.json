@@ -2,5 +2,6 @@
     "credentials_path" : "./google-credentials.json",
     "storage_bucket_name" : "teste-38055.appspot.com",
     "prefix_path" : "FaceRecognitionFiles/Alunos",
-    "force_reload" : false
+    "force_reload" : false,
+    "api" : "YOUR_API_KEY_HERE"
 }

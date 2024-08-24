@@ -22,8 +22,8 @@ class BancoAlunos:
             return None
         
         # Pega nome do aluno nos dados json
-        nome_aluno = str(self.dados_alunos[_id][0])
-        turma_aluno = str(self.dados_alunos[_id][1])
+        nome_aluno = str(self.dados_alunos[_id]["nome"])
+        turma_aluno = str(self.dados_alunos[_id]["turma"])
         
         date_data = datetime.now() # Pega o horário atual
         horario_atual = date_data.strftime('%H:%M:%S')
@@ -48,7 +48,9 @@ class BancoAlunos:
         }
 
         self._adicionar_dado_planilha(dados, self.nome_planilha)
-        self.obj_fireBaseManager.send_notification(_id)
+        #TODO
+        dados = [0, nome_aluno, _id, 'Entrada', data_atual, horario_atual, turma_aluno]
+        self.obj_fireBaseManager.send_notification(dados)
 
     def _adicionar_dado_planilha(self, dados:dict, nome_planilha:str):
         #Adicionar dados na planilha

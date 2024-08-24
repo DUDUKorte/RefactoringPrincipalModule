@@ -4,6 +4,7 @@
 *.enc
 .venv
 .mfi
+*.local.*
 google*
 cache
 dataset_faces

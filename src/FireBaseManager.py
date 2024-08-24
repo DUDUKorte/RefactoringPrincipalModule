@@ -1,5 +1,5 @@
 from DebugTools_ import *
-import os, pickle, time, json
+import os, pickle, time, json, requests
 import firebase_admin
 from tqdm import tqdm
 from firebase_admin import credentials
@@ -13,8 +13,10 @@ class FireBaseManager:
         storageBucketName = fbm_config["storage_bucket_name"]
         self.prefix_path = fbm_config["prefix_path"]
         self.force_reload = fbm_config["force_reload"]
+        self.api = fbm_config["api"]
         self.cache_path = './cache'
         self.tmp_enc_path = 'tmp_enc'
+        self.url = 'http://localhost:4747/atualizar-dados'
 
         # Inicializa SDK do firebase
         self.cred = credentials.Certificate(f'{credentials_path}')
@@ -27,19 +29,36 @@ class FireBaseManager:
 
     # Pega os dados dos alunos no bd
     def get_data(self):
-        raw_data = self.db.collection('FaceRecognitionData').stream()
+        #self.api fetch e tal
+
+        #simulate
+        raw_data = self.db.collection('Usuarios').stream()
         data = {}
+
         for db_data in raw_data:
-            data[f'{db_data.id}'] = db_data.to_dict()['Dados']
-            plog(f'{db_data.id} => {db_data.to_dict()}')
+            data_name = db_data.to_dict()['NomesAlunos']
+            data_class = db_data.to_dict()['TurmasAlunos']
+            data = {
+                key: {
+                    "nome" : data_name[key],
+                    "turma" : data_class[key]
+                }
+                for key in data_name
+                if key in data_class
+            }
+            
+            #plog(f'{db_data.id} => {db_data.to_dict()}')
         
         plog(data)
         return data
 
     # Envia notificação para o bd
-    def send_notification(self, matricula:str):
-        entrada_atual = self.db.collection('Reports').document(f'{matricula}').get().to_dict()['entradas']
-        self.db.collection('Reports').document(f'{matricula}').set({"entradas" : entrada_atual+1}, merge=True)
+    def send_notification(self, student_data:list):
+        #entrada_atual = self.db.collection('Reports').document(f'{matricula}').get().to_dict()['entradas']
+        #self.db.collection('Reports').document(f'{matricula}').set({"entradas" : entrada_atual+1}, merge=True)
+        response = requests.post(self.url, json=student_data)
+        plog(f'Status Code: {response.status_code}')
+        plog(f'Reposta: {response.text}')
 
     # Atualiza todos os dados no storage
     def update_storage_files(self, path_to_encodings:str, data_base:dict):
@@ -160,7 +179,7 @@ if __name__ == '__main__':
     """
     pip install firebase-admin
     """
-    with open('fbm_config.json', 'r') as f:
+    with open('fbm_.local.config.json', 'r') as f:
         fbm_config = json.load(f)
 
     firebasemanager = FireBaseManager(fbm_config)
@@ -169,6 +188,6 @@ if __name__ == '__main__':
     #firebasemanager._if_path_exists('FaceRecognitionFiles/Alunos/esquilo/')
     #firebasemanager.update_storage_files('dataset_faces', {'gabecm': '2434'})
     #firebasemanager.load_storage_files()
-    #firebasemanager.get_data()
+    firebasemanager.get_data()
     #firebasemanager.send_notification('esquilo_')
-    firebasemanager.load_storage_files()
+    #firebasemanager.load_storage_files()

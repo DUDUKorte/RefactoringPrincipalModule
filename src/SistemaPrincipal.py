@@ -105,9 +105,15 @@ class SistemaPrincipal:
             self.cam_settings = json.load(f)
         print(f'INFO: CONFIGURAÇÕES DE CÂMERA CARRREGADO!')
 
-        with open("fbm_config.json", 'r') as f:
-            self.fbm_config = json.load(f)
-        print(f'INFO: FBM CONFIG CARREGADO!')
+        #DEV
+        try:
+            with open("fbm_.local.config.json", 'r') as f:
+                self.fbm_config = json.load(f)
+            print(f'INFO: FBM CONFIG LOCAL CARREGADO!')
+        except:
+            with open("fbm_config.json", 'r') as f:
+                self.fbm_config = json.load(f)
+            print(f'INFO: FBM CONFIG CARREGADO!')
     
     #PRONTO
     def _reload_encoded_faces(self):
